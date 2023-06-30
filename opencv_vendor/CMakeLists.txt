@@ -8,31 +8,27 @@ endif()
 find_package(ament_cmake REQUIRED)
 
 macro(build_opencv)
-  set(cmake_commands)
-  set(cmake_configure_args -Wno-dev)
-  set(cmake_configure_args -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_install)
-
   include(ExternalProject)
   externalproject_add(opencv-ext
-    GIT_REPOSITORY https://github.com/opencv/opencv.git
-    GIT_TAG 4.8.0
-    TIMEOUT 6000
-    ${cmake_commands}
-    CMAKE_ARGS
-      ${cmake_configure_args}
+    DOWNLOAD_DIR ${CMAKE_CURRENT_BINARY_DIR}/opencv_build
+    DOWNLOAD_COMMAND curl -k -L https://github.com/opencv/opencv/archive/refs/tags/4.8.0.tar.gz -o opencv.tar.gz &&
+      tar -xzvf opencv.tar.gz &&
+      curl -k -L https://github.com/opencv/opencv_contrib/archive/refs/tags/4.8.0.tar.gz -o opencv-contrib.tar.gz &&
+      tar -xzvf opencv-contrib.tar.gz
+    CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/opencv_install -DOPENCV_EXTRA_MODULES_PATH=${CMAKE_CURRENT_BINARY_DIR}/opencv_build/opencv_contrib-4.8.0/modules
+    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/opencv_build/opencv-4.8.0
   )
 
-  # The external project will install to the build folder, but we'll install that on make install.
   install(
     DIRECTORY
-      ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}_install/
+      ${CMAKE_CURRENT_BINARY_DIR}/opencv_install
     DESTINATION
       ${CMAKE_INSTALL_PREFIX}
   )
 endmacro()
 
 build_opencv()
-ament_export_include_directories(include)
+ament_export_include_directories(opencv_install/include)
 
 ament_export_libraries(
   opencv_calib3d
@@ -40,7 +36,7 @@ ament_export_libraries(
   opencv_dnn
   opencv_features2d
   opencv_flann
-  opencv_gapi
+  # opencv_gapi
   opencv_highgui
   opencv_imgcodecs
   opencv_imgproc
