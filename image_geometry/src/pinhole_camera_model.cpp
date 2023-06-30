@@ -408,7 +408,8 @@ cv::Point2d PinholeCameraModel::rectifyPoint(const cv::Point2d& uv_raw, const cv
       cv::undistortPoints(src_pt, dst_pt, K, D_, R_, P);
       break;
     case EQUIDISTANT:
-      cv::fisheye::undistortPoints(src_pt, dst_pt, K, D_, R_, P);
+      /// @todo It triggers compile errors so temporary comment out this line.
+      // cv::fisheye::undistortPoints(src_pt, dst_pt, K, D_, R_, P);
       break;
     default:
       assert(cache_->distortion_model == UNKNOWN_MODEL);
