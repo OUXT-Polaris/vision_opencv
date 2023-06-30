@@ -37,7 +37,19 @@ ament_export_include_directories(include)
 ament_export_libraries(
   opencv_calib3d
   opencv_core
+  opencv_dnn
+  opencv_features2d
+  opencv_flann
+  opencv_gapi
+  opencv_highgui
+  opencv_imgcodecs
   opencv_imgproc
+  opencv_ml
+  opencv_objdetect
+  opencv_photo
+  opencv_stitching
+  opencv_videoio
+  opencv_video
 )
 
 if(BUILD_TESTING)
