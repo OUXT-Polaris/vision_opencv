@@ -16,14 +16,12 @@
   <author>Vincent Rabaud</author>
   <author email="mikael@osrfoundation.org">Mikael Arguedas</author>
 
-  <buildtool_depend>ament_cmake_python</buildtool_depend>
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
-  <depend>libopencv-dev</depend>
+  <depend>opencv_vendor</depend>
   <depend>sensor_msgs</depend>
 
   <test_depend>ament_cmake_gtest</test_depend>
-  <test_depend>ament_cmake_pytest</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

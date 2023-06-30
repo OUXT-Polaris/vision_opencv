@@ -27,8 +27,3 @@ target_link_libraries(${PROJECT_NAME}-utest
   opencv_imgcodecs
   ${sensor_msgs_TARGETS})
 
-# enable cv_bridge python tests
-find_package(ament_cmake_pytest REQUIRED)
-ament_add_pytest_test(enumerants.py "enumerants.py")
-ament_add_pytest_test(conversions.py "conversions.py" TIMEOUT 600 ${SKIP_TEST})
-ament_add_pytest_test(python_bindings.py "python_bindings.py")
