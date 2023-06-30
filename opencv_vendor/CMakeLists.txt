@@ -31,6 +31,7 @@ build_opencv()
 ament_export_include_directories(opencv_install/include)
 
 ament_export_libraries(
+# Library in core
   opencv_calib3d
   opencv_core
   opencv_dnn
@@ -46,6 +47,50 @@ ament_export_libraries(
   opencv_stitching
   opencv_videoio
   opencv_video
+
+# Library in contrib
+  opencv_alphamat
+  opencv_aruco
+  opencv_bgsegm
+  opencv_bioinspired
+  opencv_ccalib
+  opencv_datasets
+  opencv_dnn_objdetect
+  opencv_dnn_superres
+  opencv_dpm
+  opencv_face
+  opencv_features2d
+  opencv_freetype
+  opencv_fuzzy
+  opencv_hdf
+  opencv_hfs
+  opencv_img_hash
+  opencv_intensity_transform
+  opencv_line_descriptor
+  opencv_mcc
+  opencv_optflow
+  opencv_phase_unwrapping
+  opencv_plot
+  opencv_quality
+  opencv_rapid
+  opencv_reg
+  opencv_rgbd
+  opencv_saliency
+  # opencv_sfm
+  opencv_shape
+  opencv_stereo
+  opencv_structured_light
+  opencv_superres
+  opencv_surface_matching
+  opencv_text
+  opencv_tracking
+  opencv_videostab
+  opencv_viz
+  opencv_wechat_qrcode
+  # opencv_xfeatures2d
+  opencv_ximgproc
+  opencv_xobjdetect
+  opencv_xphoto
 )
 
 if(BUILD_TESTING)
