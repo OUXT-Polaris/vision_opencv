@@ -24,8 +24,6 @@
 #include "rclcpp/type_adapter.hpp"
 #include "sensor_msgs/msg/image.hpp"
 
-#include "cv_bridge/visibility_control.h"
-
 #include <optional>
 
 namespace cv_bridge
@@ -94,10 +92,8 @@ public:
     std::shared_ptr<sensor_msgs::msg::Image>
   >;
 
-  CV_BRIDGE_PUBLIC
   ROSCvMatContainer() = default;
 
-  CV_BRIDGE_PUBLIC
   explicit ROSCvMatContainer(const ROSCvMatContainer & other)
   : header_(other.header_), frame_(other.frame_.clone()), is_bigendian_(other.is_bigendian_)
   {
@@ -109,7 +105,6 @@ public:
     }
   }
 
-  CV_BRIDGE_PUBLIC
   ROSCvMatContainer & operator=(const ROSCvMatContainer & other)
   {
     if (this != &other) {
@@ -129,15 +124,12 @@ public:
   }
 
   /// Store an owning pointer to a sensor_msg::msg::Image, and create a cv::Mat that references it.
-  CV_BRIDGE_PUBLIC
   explicit ROSCvMatContainer(std::unique_ptr<sensor_msgs::msg::Image> unique_sensor_msgs_image);
 
   /// Store an owning pointer to a sensor_msg::msg::Image, and create a cv::Mat that references it.
-  CV_BRIDGE_PUBLIC
   explicit ROSCvMatContainer(std::shared_ptr<sensor_msgs::msg::Image> shared_sensor_msgs_image);
 
   /// Shallow copy the given cv::Mat into this class, but do not own the data directly.
-  CV_BRIDGE_PUBLIC
   ROSCvMatContainer(
     const cv::Mat & mat_frame,
     const std_msgs::msg::Header & header,
@@ -145,7 +137,6 @@ public:
     std::optional<std::string> encoding_override = std::nullopt);
 
   /// Move the given cv::Mat into this class.
-  CV_BRIDGE_PUBLIC
   ROSCvMatContainer(
     cv::Mat && mat_frame,
     const std_msgs::msg::Header & header,
@@ -153,7 +144,6 @@ public:
     std::optional<std::string> encoding_override = std::nullopt);
 
   /// Copy the sensor_msgs::msg::Image into this contain and create a cv::Mat that references it.
-  CV_BRIDGE_PUBLIC
   explicit ROSCvMatContainer(const sensor_msgs::msg::Image & sensor_msgs_image);
 
   /// Return true if this class owns the data the cv_mat references.
@@ -161,12 +151,10 @@ public:
    * Note that this does not check if the cv::Mat owns its own data, only if
    * this class owns a sensor_msgs::msg::Image that the cv::Mat references.
    */
-  CV_BRIDGE_PUBLIC
   bool
   is_owning() const;
 
   /// Const access the cv::Mat in this class.
-  CV_BRIDGE_PUBLIC
   const cv::Mat &
   cv_mat() const;
 
@@ -175,47 +163,38 @@ public:
    * Note that if you want to let this container go out of scope you should
    * make a deep copy with cv::Mat::clone() beforehand.
    */
-  CV_BRIDGE_PUBLIC
   cv::Mat
   cv_mat();
 
   /// Const access the ROS Header.
-  CV_BRIDGE_PUBLIC
   const std_msgs::msg::Header &
   header() const;
 
   /// Access the ROS Header.
-  CV_BRIDGE_PUBLIC
   std_msgs::msg::Header &
   header();
 
   /// Get shared const pointer to the sensor_msgs::msg::Image if available, otherwise nullptr.
-  CV_BRIDGE_PUBLIC
   std::shared_ptr<const sensor_msgs::msg::Image>
   get_sensor_msgs_msg_image_pointer() const;
 
   /// Get copy as a unique pointer to the sensor_msgs::msg::Image.
-  CV_BRIDGE_PUBLIC
   std::unique_ptr<sensor_msgs::msg::Image>
   get_sensor_msgs_msg_image_pointer_copy() const;
 
   /// Get a copy of the image as a sensor_msgs::msg::Image.
-  CV_BRIDGE_PUBLIC
   sensor_msgs::msg::Image
   get_sensor_msgs_msg_image_copy() const;
 
   /// Get a copy of the image as a sensor_msgs::msg::Image.
-  CV_BRIDGE_PUBLIC
   void
   get_sensor_msgs_msg_image_copy(sensor_msgs::msg::Image & sensor_msgs_image) const;
 
   /// Return true if the data is stored in big endian, otherwise return false.
-  CV_BRIDGE_PUBLIC
   bool
   is_bigendian() const;
   
   /// Return the encoding override if provided.
-  CV_BRIDGE_PUBLIC
   std::optional<std::string>
   encoding_override() const;
 

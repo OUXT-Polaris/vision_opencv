@@ -37,7 +37,6 @@
 #define CV_BRIDGE__RGB_COLORS_HPP_
 
 #include <opencv2/opencv.hpp>
-#include <cv_bridge/cv_bridge_export.h>
 
 
 namespace cv_bridge
@@ -204,7 +203,7 @@ enum Colors
  * @brief
  * get rgb color with enum.
  */
-CV_BRIDGE_EXPORT cv::Vec3d getRGBColor(const int color);
+cv::Vec3d getRGBColor(const int color);
 
 }  // namespace rgb_colors
 

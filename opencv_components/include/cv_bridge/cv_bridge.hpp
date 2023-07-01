@@ -43,7 +43,6 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
-#include <cv_bridge/cv_bridge_export.h>
 
 #include <memory>
 #include <ostream>
@@ -53,7 +52,7 @@
 namespace cv_bridge
 {
 
-class CV_BRIDGE_EXPORT Exception : public std::runtime_error
+class Exception : public std::runtime_error
 {
 public:
   explicit Exception(const std::string & description)
@@ -82,7 +81,7 @@ typedef enum
  * \brief Image message class that is interoperable with sensor_msgs/Image but uses a
  * more convenient cv::Mat representation for the image data.
  */
-class CV_BRIDGE_EXPORT CvImage
+class CvImage
 {
 public:
   std_msgs::msg::Header header;  // !< ROS header
@@ -150,7 +149,7 @@ protected:
 
   /// @cond DOXYGEN_IGNORE
   friend
-  CV_BRIDGE_EXPORT CvImageConstPtr toCvShare(
+    CvImageConstPtr toCvShare(
     const sensor_msgs::msg::Image & source,
     const std::shared_ptr<void const> & tracked_object,
     const std::string & encoding);
@@ -174,11 +173,11 @@ protected:
  * If \a encoding is the empty string (the default), the returned CvImage has the same encoding
  * as \a source.
  */
-CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
+CvImagePtr toCvCopy(
   const sensor_msgs::msg::Image::ConstSharedPtr & source,
   const std::string & encoding = std::string());
 
-CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
+CvImagePtr toCvCopy(
   const sensor_msgs::msg::CompressedImage::ConstSharedPtr & source,
   const std::string & encoding = std::string());
 
@@ -201,11 +200,11 @@ CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
  * 255/65535 respectively). Otherwise, no scaling is applied and the rules from the convertTo OpenCV
  * function are applied (capping): http://docs.opencv.org/modules/core/doc/basic_structures.html#mat-convertto
  */
-CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
+CvImagePtr toCvCopy(
   const sensor_msgs::msg::Image & source,
   const std::string & encoding = std::string());
 
-CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
+CvImagePtr toCvCopy(
   const sensor_msgs::msg::CompressedImage & source,
   const std::string & encoding = std::string());
 
@@ -229,7 +228,7 @@ CV_BRIDGE_EXPORT CvImagePtr toCvCopy(
  * If \a encoding is the empty string (the default), the returned CvImage has the same encoding
  * as \a source.
  */
-CV_BRIDGE_EXPORT CvImageConstPtr toCvShare(
+CvImageConstPtr toCvShare(
   const sensor_msgs::msg::Image::ConstSharedPtr & source,
   const std::string & encoding = std::string());
 
@@ -257,7 +256,7 @@ CV_BRIDGE_EXPORT CvImageConstPtr toCvShare(
  * If \a encoding is the empty string (the default), the returned CvImage has the same encoding
  * as \a source.
  */
-CV_BRIDGE_EXPORT CvImageConstPtr toCvShare(
+CvImageConstPtr toCvShare(
   const sensor_msgs::msg::Image & source,
   const std::shared_ptr<void const> & tracked_object,
   const std::string & encoding = std::string());
@@ -265,7 +264,7 @@ CV_BRIDGE_EXPORT CvImageConstPtr toCvShare(
 /**
  * \brief Convert a CvImage to another encoding using the same rules as toCvCopy
  */
-CV_BRIDGE_EXPORT CvImagePtr cvtColor(
+CvImagePtr cvtColor(
   const CvImageConstPtr & source,
   const std::string & encoding);
 
@@ -316,7 +315,7 @@ struct CvtColorForDisplayOptions
  * - max_image_value Maximum image value
  * - colormap Colormap which the source image converted with.
  */
-CV_BRIDGE_EXPORT CvImageConstPtr cvtColorForDisplay(
+CvImageConstPtr cvtColorForDisplay(
   const CvImageConstPtr & source,
   const std::string & encoding = std::string(),
   const CvtColorForDisplayOptions options = CvtColorForDisplayOptions());
@@ -326,7 +325,7 @@ CV_BRIDGE_EXPORT CvImageConstPtr cvtColorForDisplay(
  *
  * For example, "bgr8" -> CV_8UC3, "32FC1" -> CV_32FC1, and "32FC10" -> CV_32FC10.
  */
-CV_BRIDGE_EXPORT int getCvType(const std::string & encoding);
+int getCvType(const std::string & encoding);
 
 }  // namespace cv_bridge
 

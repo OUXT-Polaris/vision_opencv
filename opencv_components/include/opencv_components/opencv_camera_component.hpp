@@ -2,7 +2,7 @@
 #define OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 
 #include <image_transport/image_transport.hpp>
-//#include <cv_bridge/cv_bridge.hpp>
+#include <cv_bridge/cv_bridge.hpp>
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
 

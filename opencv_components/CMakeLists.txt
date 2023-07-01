@@ -8,24 +8,23 @@ endif()
 # find dependencies
 find_package(ament_cmake_auto REQUIRED)
 ament_auto_find_build_dependencies()
-find_package(cv_bridge REQUIRED)
 
 include_directories(include
   ${opencv_vendor_INCLUDE_DIRS}/opencv4
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/../include>"
-  "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
-  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+
+ament_auto_add_library(cv_bridge SHARED
+  src/cv_bridge/cv_bridge.cpp
+  src/cv_bridge/cv_mat_sensor_msgs_image_type_adapter.cpp
+  src/cv_bridge/rgb_colors.cpp
 )
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/opencv_camera_component.cpp
 )
-ament_target_dependencies(${PROJECT_NAME}
-  cv_bridge
-)
-
 target_link_libraries(${PROJECT_NAME}
   opencv_core
+  cv_bridge
 )
 
 ament_auto_add_executable(opencv_camera_node
