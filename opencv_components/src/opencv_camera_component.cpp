@@ -16,7 +16,6 @@
 
 namespace opencv_components
 {
-
 OpenCVCameraComponent::OpenCVCameraComponent(const rclcpp::NodeOptions & options)
 : rclcpp::Node("opencv_camera_node", options),
   parameter_listener_(get_node_parameters_interface()),

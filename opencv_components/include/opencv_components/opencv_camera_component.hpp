@@ -26,7 +26,6 @@
 
 namespace opencv_components
 {
-
 class OpenCVCameraComponent : public rclcpp::Node
 {
 public:

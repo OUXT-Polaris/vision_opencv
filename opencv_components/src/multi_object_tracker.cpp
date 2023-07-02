@@ -12,32 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
-#define OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
-
-#include <atomic>
-#include <cv_bridge/cv_bridge.hpp>
-#include <image_transport/image_transport.hpp>
-#include <opencv2/opencv.hpp>
-#include <opencv2/tracking.hpp>
 #include <opencv_components/multi_object_tracker.hpp>
-#include <rclcpp/rclcpp.hpp>
-
-#include "opencv_components/visibility_control.h"
 
 namespace opencv_components
 {
-class TrackingComponent : public rclcpp::Node
+ObjectTracjer::ObjectTracjer(const TrackingMethod method)
+: tracker_([](const auto method) -> cv::Ptr<cv::Tracker> {
+    switch (method) {
+      case TrackingMethod::CSRT:
+        return cv::TrackerCSRT::create();
+      case TrackingMethod::DA_SIAM_RPN:
+        return cv::TrackerDaSiamRPN::create();
+      case TrackingMethod::GOTURN:
+        return cv::TrackerGOTURN::create();
+      case TrackingMethod::KCF:
+        return cv::TrackerKCF::create();
+      case TrackingMethod::MIL:
+        return cv::TrackerMIL::create();
+      /*
+      case TrackingMethod::NANO:
+        return cv::TrackerNano::create();
+      */
+      default:
+        return cv::TrackerDaSiamRPN::create();
+    }
+  }(method))
 {
-public:
-  explicit TrackingComponent(const rclcpp::NodeOptions & options);
-
-  virtual ~TrackingComponent();
-
-private:
-  cv::Ptr<cv::Tracker> tracker_;
-};
-
+}
 }  // namespace opencv_components
-
-#endif  // OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_

@@ -16,7 +16,6 @@
 
 namespace opencv_components
 {
-
 TrackingComponent::TrackingComponent(const rclcpp::NodeOptions & options)
 : rclcpp::Node("tracking_node", options), tracker_(cv::TrackerKCF::create())
 {

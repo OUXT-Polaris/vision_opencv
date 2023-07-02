@@ -12,4 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <opencv2/opencv.hpp>
+#include <opencv2/tracking.hpp>
 #include <opencv_components/hungarian.hpp>
+#include <perception_msgs/msg/detection2_d.hpp>
+
+namespace opencv_components
+{
+/// @sa https://docs.opencv.org/4.x/d0/d0a/classcv_1_1Tracker.html
+enum class TrackingMethod { CSRT, DA_SIAM_RPN, GOTURN, KCF, MIL, /*NANO*/ };
+
+class ObjectTracjer
+{
+public:
+  explicit ObjectTracjer(const TrackingMethod method);
+
+private:
+  cv::Ptr<cv::Tracker> tracker_;
+};
+
+class MultiObjectTracker
+{
+private:
+};
+}  // namespace opencv_components
