@@ -26,6 +26,7 @@ ament_auto_add_library(cv_bridge SHARED
 
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/opencv_camera_component.cpp
+  src/tracking_component.cpp
 )
 target_link_libraries(${PROJECT_NAME}
   opencv_core
@@ -37,6 +38,13 @@ ament_auto_add_executable(opencv_camera_node
   src/opencv_camera_node.cpp
 )
 target_link_libraries(opencv_camera_node
+  ${PROJECT_NAME}
+)
+
+ament_auto_add_executable(tracking_node
+  src/tracking_node.cpp
+)
+target_link_libraries(tracking_node
   ${PROJECT_NAME}
 )
 
