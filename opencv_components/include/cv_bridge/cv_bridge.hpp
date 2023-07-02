@@ -37,15 +37,15 @@
 #ifndef CV_BRIDGE__CV_BRIDGE_HPP_
 #define CV_BRIDGE__CV_BRIDGE_HPP_
 
-#include <sensor_msgs/msg/image.hpp>
-#include <sensor_msgs/msg/compressed_image.hpp>
-#include <sensor_msgs/image_encodings.hpp>
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/imgproc/types_c.h>
 
 #include <memory>
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
 #include <ostream>
+#include <sensor_msgs/image_encodings.hpp>
+#include <sensor_msgs/msg/compressed_image.hpp>
+#include <sensor_msgs/msg/image.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -55,8 +55,7 @@ namespace cv_bridge
 class Exception : public std::runtime_error
 {
 public:
-  explicit Exception(const std::string & description)
-  : std::runtime_error(description) {}
+  explicit Exception(const std::string & description) : std::runtime_error(description) {}
 };
 
 class CvImage;
@@ -66,15 +65,21 @@ typedef std::shared_ptr<CvImage const> CvImageConstPtr;
 
 // From: http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html#Mat
 // imread(const string& filename, int flags)
-typedef enum
-{
-  BMP, DIB,
-  JPG, JPEG, JPE,
+typedef enum {
+  BMP,
+  DIB,
+  JPG,
+  JPEG,
+  JPE,
   JP2,
   PNG,
-  PBM, PGM, PPM,
-  SR, RAS,
-  TIFF, TIF,
+  PBM,
+  PGM,
+  PPM,
+  SR,
+  RAS,
+  TIFF,
+  TIF,
 } Format;
 
 /**
@@ -85,8 +90,8 @@ class CvImage
 {
 public:
   std_msgs::msg::Header header;  // !< ROS header
-  std::string encoding;    // !< Image encoding ("mono8", "bgr8", etc.)
-  cv::Mat image;           // !< Image data for use with OpenCV
+  std::string encoding;          // !< Image encoding ("mono8", "bgr8", etc.)
+  cv::Mat image;                 // !< Image data for use with OpenCV
 
   /**
    * \brief Empty constructor.
@@ -118,8 +123,7 @@ public:
    * http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html#Mat imread(const string& filename, int flags)
    */
   sensor_msgs::msg::CompressedImage::SharedPtr toCompressedImageMsg(
-    const Format dst_format =
-    JPG) const;
+    const Format dst_format = JPG) const;
 
   /**
    * \brief Copy the message data to a ROS sensor_msgs::msg::Image message.
@@ -137,9 +141,7 @@ public:
    * http://docs.opencv.org/modules/highgui/doc/reading_and_writing_images_and_video.html#Mat imread(const string& filename, int flags)
    */
   void toCompressedImageMsg(
-    sensor_msgs::msg::CompressedImage & ros_image,
-    const Format dst_format = JPG) const;
-
+    sensor_msgs::msg::CompressedImage & ros_image, const Format dst_format = JPG) const;
 
   typedef std::shared_ptr<CvImage> Ptr;
   typedef std::shared_ptr<CvImage const> ConstPtr;
@@ -148,14 +150,11 @@ protected:
   std::shared_ptr<void const> tracked_object_;  // for sharing ownership
 
   /// @cond DOXYGEN_IGNORE
-  friend
-    CvImageConstPtr toCvShare(
-    const sensor_msgs::msg::Image & source,
-    const std::shared_ptr<void const> & tracked_object,
+  friend CvImageConstPtr toCvShare(
+    const sensor_msgs::msg::Image & source, const std::shared_ptr<void const> & tracked_object,
     const std::string & encoding);
   /// @endcond
 };
-
 
 /**
  * \brief Convert a sensor_msgs::msg::Image message to an OpenCV-compatible CvImage, copying the
@@ -201,12 +200,10 @@ CvImagePtr toCvCopy(
  * function are applied (capping): http://docs.opencv.org/modules/core/doc/basic_structures.html#mat-convertto
  */
 CvImagePtr toCvCopy(
-  const sensor_msgs::msg::Image & source,
-  const std::string & encoding = std::string());
+  const sensor_msgs::msg::Image & source, const std::string & encoding = std::string());
 
 CvImagePtr toCvCopy(
-  const sensor_msgs::msg::CompressedImage & source,
-  const std::string & encoding = std::string());
+  const sensor_msgs::msg::CompressedImage & source, const std::string & encoding = std::string());
 
 /**
  * \brief Convert an immutable sensor_msgs::msg::Image message to an OpenCV-compatible CvImage, sharing
@@ -257,16 +254,13 @@ CvImageConstPtr toCvShare(
  * as \a source.
  */
 CvImageConstPtr toCvShare(
-  const sensor_msgs::msg::Image & source,
-  const std::shared_ptr<void const> & tracked_object,
+  const sensor_msgs::msg::Image & source, const std::shared_ptr<void const> & tracked_object,
   const std::string & encoding = std::string());
 
 /**
  * \brief Convert a CvImage to another encoding using the same rules as toCvCopy
  */
-CvImagePtr cvtColor(
-  const CvImageConstPtr & source,
-  const std::string & encoding);
+CvImagePtr cvtColor(const CvImageConstPtr & source, const std::string & encoding);
 
 struct CvtColorForDisplayOptions
 {
@@ -275,14 +269,15 @@ struct CvtColorForDisplayOptions
     min_image_value(0.0),
     max_image_value(0.0),
     colormap(-1),
-    bg_label(-1) {}
+    bg_label(-1)
+  {
+  }
   bool do_dynamic_scaling;
   double min_image_value;
   double max_image_value;
   int colormap;
   int bg_label;
 };
-
 
 /**
  * \brief Converts an immutable sensor_msgs::msg::Image message to another CvImage for display purposes,
@@ -316,8 +311,7 @@ struct CvtColorForDisplayOptions
  * - colormap Colormap which the source image converted with.
  */
 CvImageConstPtr cvtColorForDisplay(
-  const CvImageConstPtr & source,
-  const std::string & encoding = std::string(),
+  const CvImageConstPtr & source, const std::string & encoding = std::string(),
   const CvtColorForDisplayOptions options = CvtColorForDisplayOptions());
 
 /**

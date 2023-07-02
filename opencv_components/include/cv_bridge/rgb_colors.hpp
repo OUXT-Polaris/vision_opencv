@@ -38,7 +38,6 @@
 
 #include <opencv2/opencv.hpp>
 
-
 namespace cv_bridge
 {
 
@@ -49,8 +48,7 @@ namespace rgb_colors
  * @brief
  * 146 rgb colors
  */
-enum Colors
-{
+enum Colors {
   ALICEBLUE,
   ANTIQUEWHITE,
   AQUA,

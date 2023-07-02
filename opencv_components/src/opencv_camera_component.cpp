@@ -9,12 +9,23 @@ OpenCVCameraComponent::OpenCVCameraComponent(const rclcpp::NodeOptions & options
   capture_(0),
   capture_thread_([this]() {
     cv::Mat frame;
-    while (capture_.read(frame)) {
+    while (is_capturing_.load() && capture_.read(frame)) {
+      if (frame.empty()) {
+        continue;
+      }
+      camera_pub_.publish(
+        cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", frame).toImageMsg(),
+        std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
     }
   })
 {
+  is_capturing_.store(true);
 }
 
-OpenCVCameraComponent::~OpenCVCameraComponent() {}
+OpenCVCameraComponent::~OpenCVCameraComponent()
+{
+  is_capturing_.store(false);
+  capture_thread_.join();
+}
 
 }  // namespace opencv_components
