@@ -48,9 +48,9 @@ target_link_libraries(tracking_node
   ${PROJECT_NAME}
 )
 
-# launch/conifg file
-install(DIRECTORY launch
-  DESTINATION share/${PROJECT_NAME}
-)
+# # launch/conifg file
+# install(DIRECTORY launch
+#   DESTINATION share/${PROJECT_NAME}
+# )
 
 ament_auto_package()

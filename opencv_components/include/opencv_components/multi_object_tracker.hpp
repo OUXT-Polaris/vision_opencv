@@ -12,16 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#include <memory>
-#include <opencv_components/opencv_camera_component.hpp>
-#include <rclcpp/rclcpp.hpp>
-
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-  rclcpp::NodeOptions options;
-  auto component = std::make_shared<opencv_components::OpenCVCameraComponent>(options);
-  rclcpp::spin(component);
-  rclcpp::shutdown();
-  return 0;
-}
+#include <opencv_components/hungarian.hpp>
