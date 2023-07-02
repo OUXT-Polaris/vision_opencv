@@ -5,6 +5,7 @@
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv2/tracking.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "opencv_components/visibility_control.h"
@@ -20,6 +21,7 @@ public:
   virtual ~TrackingComponent();
 
 private:
+  cv::Ptr<cv::Tracker> tracker_;
 };
 
 }  // namespace opencv_components
