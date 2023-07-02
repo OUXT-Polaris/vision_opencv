@@ -84,6 +84,20 @@ void MultiObjectTracker::update(
         ObjectTracker(TrackingMethod::DA_SIAM_RPN, image, detection, lifetime_));
     }
   } else {
+    const auto construct_cost_matrix =
+      [this](const auto & detections) -> std::vector<std::vector<double>> {
+      std::vector<std::vector<double>> matrix;
+      for (const auto & detection : detections.detections) {
+        std::vector<double> row;
+        for (const auto & tracker : trackers_) {
+          assert(tracker.getRect());
+          row.push_back(getIoU(tracker.getRect().value(), toCVRect(detection.bbox)));
+        }
+        matrix.emplace_back(row);
+      }
+      return matrix;
+    };
+    Hungarian(construct_cost_matrix(detections));
   }
 }
 
