@@ -8,7 +8,7 @@ OpenCVCameraComponent::OpenCVCameraComponent(const rclcpp::NodeOptions & options
   parameter_listener_(get_node_parameters_interface()),
   parameters_(parameter_listener_.get_params()),
   camera_pub_(this, "camera"),
-  capture_(parameters.camera_id),
+  capture_(parameters_.camera_id),
   capture_thread_([this]() {
     cv::Mat frame;
     while (is_capturing_.load() && capture_.read(frame)) {
