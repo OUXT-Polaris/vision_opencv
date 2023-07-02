@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include <boost/assign/list_of.hpp>
+#include <boost/geometry.hpp>
+#include <boost/geometry/algorithms/disjoint.hpp>
 #include <opencv_components/util.hpp>
 
 namespace opencv_components
@@ -23,5 +26,36 @@ cv::Rect toCVRect(const vision_msgs::msg::BoundingBox2D & msg)
     static_cast<int>(msg.center.position.y - 0.5 * msg.size_y),
     static_cast<int>(msg.center.position.x + 0.5 * msg.size_x),
     static_cast<int>(msg.center.position.y + 0.5 * msg.size_y));
+}
+
+BoostRect toBoostRect(const cv::Rect & rect)
+{
+  return BoostRect(
+    BoostPoint(rect.x, rect.y), BoostPoint(rect.x + rect.width, rect.y + rect.height));
+}
+
+BoostPolygon toBoostPolygon(const cv::Rect & rect)
+{
+  BoostPolygon poly;
+  boost::geometry::exterior_ring(poly) =
+    boost::assign::list_of<BoostPoint>(rect.x, rect.y)(rect.x + rect.width, rect.y)(
+      rect.x, rect.y + rect.height)(rect.x + rect.width, rect.y + rect.height);
+  return poly;
+}
+
+double getIoU(const cv::Rect & rect0, const cv::Rect & rect1)
+{
+  const auto box0 = toBoostRect(rect0);
+  const auto box1 = toBoostRect(rect1);
+  if (boost::geometry::disjoint(box0, box1)) {
+    return 0;
+  }
+  std::vector<BoostPolygon> uinon_polygon;
+  std::vector<BoostPolygon> intersection_polygon;
+  boost::geometry::union_(toBoostPolygon(rect0), toBoostPolygon(rect1), uinon_polygon);
+  boost::geometry::intersection(toBoostPolygon(rect0), toBoostPolygon(rect1), intersection_polygon);
+  assert(intersection_polygon.size() == 1);
+  assert(uinon_polygon.size() == 1);
+  return boost::geometry::area(intersection_polygon[0]) / boost::geometry::area(uinon_polygon[0]);
 }
 }  // namespace opencv_components

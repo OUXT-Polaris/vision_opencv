@@ -15,12 +15,22 @@
 #ifndef OPENCV_COMPONENTS__UTIL_HPP_
 #define OPENCV_COMPONENTS__UTIL_HPP_
 
+#include <boost/geometry/geometries/box.hpp>
+#include <boost/geometry/geometries/point_xy.hpp>
+#include <boost/geometry/geometries/polygon.hpp>
 #include <opencv2/opencv.hpp>
 #include <vision_msgs/msg/bounding_box2_d.hpp>
 
 namespace opencv_components
 {
+using BoostPoint = boost::geometry::model::d2::point_xy<int>;
+using BoostRect = boost::geometry::model::box<BoostPoint>;
+using BoostPolygon = boost::geometry::model::polygon<BoostPoint>;
+
 cv::Rect toCVRect(const vision_msgs::msg::BoundingBox2D & msg);
+BoostRect toBoostRect(const cv::Rect & rect);
+BoostPolygon toBoostPolygon(const cv::Rect & rect);
+double getIoU(const cv::Rect & rect0, const cv::Rect & rect1);
 }  // namespace opencv_components
 
 #endif  // OPENCV_COMPONENTS__UTIL_HPP_

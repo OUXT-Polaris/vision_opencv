@@ -75,13 +75,15 @@ void MultiObjectTracker::update(
     }
   }
 
-  /// @note If rects
   const auto rects = getRects();
+  /// @note If rects are empty, it means no trackers exist.
   if (rects.empty()) {
+    assert(trackers_.size() == 0);
     for (const auto & detection : detections.detections) {
       trackers_.emplace_back(
         ObjectTracker(TrackingMethod::DA_SIAM_RPN, image, detection, lifetime_));
     }
+  } else {
   }
 }
 
