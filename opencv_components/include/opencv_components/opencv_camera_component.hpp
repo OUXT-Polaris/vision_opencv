@@ -5,6 +5,7 @@
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv_camera_parameters.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 #include "opencv_components/visibility_control.h"
@@ -20,6 +21,8 @@ public:
   virtual ~OpenCVCameraComponent();
 
 private:
+  opencv_camera_components::ParamListener parameter_listener_;
+  opencv_camera_components::Params parameters_;
   image_transport::CameraPublisher camera_pub_;
   cv::VideoCapture capture_;
   std::thread capture_thread_;

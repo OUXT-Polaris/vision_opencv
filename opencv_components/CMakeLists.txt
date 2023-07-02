@@ -13,6 +13,11 @@ include_directories(include
   ${opencv_vendor_INCLUDE_DIRS}/opencv4
 )
 
+generate_parameter_library(
+  opencv_camera_parameters
+  parameters/opencv_camera_parameters.yaml
+)
+
 ament_auto_add_library(cv_bridge SHARED
   src/cv_bridge/cv_bridge.cpp
   src/cv_bridge/cv_mat_sensor_msgs_image_type_adapter.cpp
@@ -25,6 +30,7 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 target_link_libraries(${PROJECT_NAME}
   opencv_core
   cv_bridge
+  opencv_camera_parameters
 )
 
 ament_auto_add_executable(opencv_camera_node

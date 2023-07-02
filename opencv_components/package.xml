@@ -10,6 +10,7 @@
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
   <buildtool_depend>ament_cmake_auto</buildtool_depend>
 
+  <depend>generate_parameter_library</depend>
   <depend>image_transport</depend>
   <depend>launch</depend>
   <depend>opencv_vendor</depend>
