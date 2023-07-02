@@ -46,17 +46,19 @@ ObjectTracker::ObjectTracker(
   tracker_->init(image, toCVRect(detection.bbox));
 }
 
+bool ObjectTracker::isExpired(const rclcpp::Time & stamp) const
+{
+  return (rclcpp::Time(stamp) - initialize_timestamp_) >= lifetime_;
+}
+
 std::optional<cv::Rect> ObjectTracker::update(
   const cv::Mat & image, const perception_msgs::msg::Detection2D & detection)
 {
-  const auto lifetime_passed = [this](const auto & detection) {
-    return (rclcpp::Time(detection.header.stamp) - initialize_timestamp_) >= lifetime_;
-  };
-  const auto update_tracker = [this](const auto & image, const auto & detection) {
-    auto rect = toCVRect(detection.bbox);
+  const auto update_tracker = [this](const auto & image) {
+    auto rect = cv::Rect();
     return tracker_->update(image, rect) ? [this](const auto & rect){rect_ = rect; return rect;}(rect) : std::optional<cv::Rect>();
   };
-  return lifetime_passed(detection) ? std::optional<cv::Rect>() : update_tracker(image, detection);
+  return isExpired(detection.header.stamp) ? std::optional<cv::Rect>() : update_tracker(image);
 }
 
 std::optional<cv::Rect> ObjectTracker::getRect() const { return rect_; }
@@ -66,6 +68,14 @@ MultiObjectTracker::MultiObjectTracker(const rclcpp::Duration & lifetime) : life
 void MultiObjectTracker::update(
   const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections)
 {
+  /// @note Remove expired/failed trackers
+  for (auto tracker = trackers_.begin(); tracker != trackers_.end(); tracker++) {
+    if (tracker->isExpired(detections.header.stamp) || !tracker->getRect()) {
+      trackers_.erase(tracker);
+    }
+  }
+
+  /// @note If rects
   const auto rects = getRects();
   if (rects.empty()) {
     for (const auto & detection : detections.detections) {

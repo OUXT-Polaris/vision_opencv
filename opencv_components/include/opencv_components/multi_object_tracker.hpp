@@ -39,6 +39,7 @@ public:
   std::optional<cv::Rect> update(
     const cv::Mat & image, const perception_msgs::msg::Detection2D & detection);
   std::optional<cv::Rect> getRect() const;
+  bool isExpired(const rclcpp::Time & stamp) const;
 
 private:
   const cv::Ptr<cv::Tracker> tracker_;
@@ -57,7 +58,7 @@ public:
 private:
   std::vector<cv::Rect> getRects() const;
   const rclcpp::Duration lifetime_;
-  std::vector<ObjectTracker> trackers_;
+  std::list<ObjectTracker> trackers_;
 };
 }  // namespace opencv_components
 
