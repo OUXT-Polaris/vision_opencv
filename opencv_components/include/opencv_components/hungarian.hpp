@@ -12,6 +12,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef OPENCV_COMPONENTS__HUNGARIAN_HPP_
+#define OPENCV_COMPONENTS__HUNGARIAN_HPP_
+
 #include <utility>
 #include <vector>
 
@@ -203,3 +206,5 @@ public:
     return make_pair(total_cost, alloc);
   }
 };
+
+#endif  // OPENCV_COMPONENTS__HUNGARIAN_HPP_

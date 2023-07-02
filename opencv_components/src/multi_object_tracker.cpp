@@ -16,7 +16,9 @@
 
 namespace opencv_components
 {
-ObjectTracjer::ObjectTracjer(const TrackingMethod method)
+ObjectTracjer::ObjectTracjer(
+  const TrackingMethod method, const cv::Mat & image,
+  const perception_msgs::msg::Detection2D & detection, const rclcpp::Duration & lifetime)
 : tracker_([](const auto method) -> cv::Ptr<cv::Tracker> {
     switch (method) {
       case TrackingMethod::CSRT:
@@ -36,7 +38,23 @@ ObjectTracjer::ObjectTracjer(const TrackingMethod method)
       default:
         return cv::TrackerDaSiamRPN::create();
     }
-  }(method))
+  }(method)),
+  lifetime_(lifetime),
+  initialize_timestamp_(detection.header.stamp)
 {
+  tracker_->init(image, toCVRect(detection.bbox));
+}
+
+std::optional<cv::Rect> ObjectTracjer::update(
+  const cv::Mat & image, const perception_msgs::msg::Detection2D & detection)
+{
+  const auto lifetime_passed = [this](const auto & detection) {
+    return (rclcpp::Time(detection.header.stamp) - initialize_timestamp_) >= lifetime_;
+  };
+  const auto update_tracker = [this](const auto & image, const auto & detection) {
+    auto rect = toCVRect(detection.bbox);
+    return tracker_->update(image, rect) ? rect : std::optional<cv::Rect>();
+  };
+  return lifetime_passed(detection) ? std::optional<cv::Rect>() : update_tracker(image, detection);
 }
 }  // namespace opencv_components

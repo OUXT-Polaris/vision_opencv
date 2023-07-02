@@ -12,10 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#ifndef OPENCV_COMPONENTS__MULTI_OBJECT_TRACKER_HPP_
+#define OPENCV_COMPONENTS__MULTI_OBJECT_TRACKER_HPP_
+
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
 #include <opencv_components/hungarian.hpp>
+#include <opencv_components/util.hpp>
+#include <optional>
 #include <perception_msgs/msg/detection2_d.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 namespace opencv_components
 {
@@ -25,10 +31,17 @@ enum class TrackingMethod { CSRT, DA_SIAM_RPN, GOTURN, KCF, MIL, /*NANO*/ };
 class ObjectTracjer
 {
 public:
-  explicit ObjectTracjer(const TrackingMethod method);
+  explicit ObjectTracjer(
+    const TrackingMethod method, const cv::Mat & image,
+    const perception_msgs::msg::Detection2D & detection,
+    const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
+  std::optional<cv::Rect> update(
+    const cv::Mat & image, const perception_msgs::msg::Detection2D & detection);
 
 private:
   cv::Ptr<cv::Tracker> tracker_;
+  rclcpp::Duration lifetime_;
+  rclcpp::Time initialize_timestamp_;
 };
 
 class MultiObjectTracker
@@ -36,3 +49,5 @@ class MultiObjectTracker
 private:
 };
 }  // namespace opencv_components
+
+#endif  // OPENCV_COMPONENTS__MULTI_OBJECT_TRACKER_HPP_
