@@ -21,6 +21,7 @@
 #include <opencv_components/util.hpp>
 #include <optional>
 #include <perception_msgs/msg/detection2_d.hpp>
+#include <perception_msgs/msg/detection2_d_array.hpp>
 #include <rclcpp/rclcpp.hpp>
 
 namespace opencv_components
@@ -28,25 +29,35 @@ namespace opencv_components
 /// @sa https://docs.opencv.org/4.x/d0/d0a/classcv_1_1Tracker.html
 enum class TrackingMethod { CSRT, DA_SIAM_RPN, GOTURN, KCF, MIL, /*NANO*/ };
 
-class ObjectTracjer
+class ObjectTracker
 {
 public:
-  explicit ObjectTracjer(
+  explicit ObjectTracker(
     const TrackingMethod method, const cv::Mat & image,
     const perception_msgs::msg::Detection2D & detection,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
   std::optional<cv::Rect> update(
     const cv::Mat & image, const perception_msgs::msg::Detection2D & detection);
+  std::optional<cv::Rect> getRect() const;
 
 private:
-  cv::Ptr<cv::Tracker> tracker_;
-  rclcpp::Duration lifetime_;
-  rclcpp::Time initialize_timestamp_;
+  const cv::Ptr<cv::Tracker> tracker_;
+  const rclcpp::Duration lifetime_;
+  const rclcpp::Time initialize_timestamp_;
+  std::optional<cv::Rect> rect_;
 };
 
 class MultiObjectTracker
 {
+public:
+  explicit MultiObjectTracker(
+    const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
+  void update(const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections);
+
 private:
+  std::vector<cv::Rect> getRects() const;
+  const rclcpp::Duration lifetime_;
+  std::vector<ObjectTracker> trackers_;
 };
 }  // namespace opencv_components
 
