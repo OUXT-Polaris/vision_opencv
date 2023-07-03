@@ -111,23 +111,26 @@ void MultiObjectTracker::update(
       /// @note assing tracker
       size_t detection_index = 0;
       for (const auto tracker_index : solution.second) {
+        /// @note Detection are exists, but no tracker existing.
         if (tracker_index == -1) {
-          /// @note Detection are exists, but no tracker existing.
           trackers_.emplace_back(ObjectTracker(
             TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index], lifetime_));
-        } else {
+        }
+        /// @note Hungarian solver found mathing.
+        else {
           auto tracker_itr = trackers_.begin();
           std::advance(tracker_itr, tracker_index);
+          /// @note Detection and tracker are not associated, so create new tracker.
           if (
             getIoU(
               tracker_itr->getRect().value(),
               toCVRect(detections.detections[detection_index].bbox)) <= iou_threashold) {
-            /// @note Detection and tracker are not associated, so create new tracker.
             trackers_.emplace_back(ObjectTracker(
               TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
               lifetime_));
-          } else {
-            /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
+          }
+          /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
+          else {
             trackers_.erase(tracker_itr);
             trackers_.emplace_back(ObjectTracker(
               TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
@@ -153,6 +156,37 @@ void MultiObjectTracker::update(
         return matrix;
       };
       const auto solution = Hungarian(construct_cost_matrix(detections)).solve();
+      /// @note assing tracker
+      size_t tracker_index = 0;
+      for (const auto detection_index : solution.second) {
+        /// @note New tracking target detected.
+        if (detection_index == -1) {
+          trackers_.emplace_back(ObjectTracker(
+            TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index], lifetime_));
+        }
+        /// @note Hungarian solver found mathing.
+        else {
+          auto tracker_itr = trackers_.begin();
+          std::advance(tracker_itr, tracker_index);
+          /// @note Detection and tracker are not associated, so create new tracker.
+          if (
+            getIoU(
+              tracker_itr->getRect().value(),
+              toCVRect(detections.detections[detection_index].bbox)) <= iou_threashold) {
+            trackers_.emplace_back(ObjectTracker(
+              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
+              lifetime_));
+          }
+          /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
+          else {
+            trackers_.erase(tracker_itr);
+            trackers_.emplace_back(ObjectTracker(
+              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
+              lifetime_));
+          }
+        }
+        tracker_index++;
+      }
     }
   }
 }
