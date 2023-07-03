@@ -51,23 +51,30 @@ bool ObjectTracker::isExpired(const rclcpp::Time & stamp) const
   return (rclcpp::Time(stamp) - initialize_timestamp_) >= lifetime_;
 }
 
-std::optional<cv::Rect> ObjectTracker::update(
-  const cv::Mat & image, const perception_msgs::msg::Detection2D & detection)
+std::optional<cv::Rect> ObjectTracker::update(const cv::Mat & image, const rclcpp::Time & stamp)
 {
   const auto update_tracker = [this](const auto & image) {
     auto rect = cv::Rect();
     return tracker_->update(image, rect) ? [this](const auto & rect){rect_ = rect; return rect;}(rect) : std::optional<cv::Rect>();
   };
-  return isExpired(detection.header.stamp) ? std::optional<cv::Rect>() : update_tracker(image);
+  return isExpired(stamp) ? std::optional<cv::Rect>() : update_tracker(image);
 }
 
 std::optional<cv::Rect> ObjectTracker::getRect() const { return rect_; }
 
-MultiObjectTracker::MultiObjectTracker(const rclcpp::Duration & lifetime) : lifetime_(lifetime) {}
+MultiObjectTracker::MultiObjectTracker(
+  const double iou_threashold, const rclcpp::Duration & lifetime)
+: iou_threashold(iou_threashold), lifetime_(lifetime)
+{
+}
 
 void MultiObjectTracker::update(
   const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections)
 {
+  /// @note Update tracker
+  for (auto tracker : trackers_) {
+    tracker.update(image, detections.header.stamp);
+  }
   /// @note Remove expired/failed trackers
   for (auto tracker = trackers_.begin(); tracker != trackers_.end(); tracker++) {
     if (tracker->isExpired(detections.header.stamp) || !tracker->getRect()) {
@@ -84,20 +91,69 @@ void MultiObjectTracker::update(
         ObjectTracker(TrackingMethod::DA_SIAM_RPN, image, detection, lifetime_));
     }
   } else {
-    const auto construct_cost_matrix =
-      [this](const auto & detections) -> std::vector<std::vector<double>> {
-      std::vector<std::vector<double>> matrix;
-      for (const auto & detection : detections.detections) {
-        std::vector<double> row;
+    if (trackers_.size() >= detections.detections.size()) {
+      /// @note In this case, n = trackers_.size(), m = detections.detections.size()
+      /// @sa https://kopricky.github.io/code/NetworkFlow/hungarian.html
+      const auto construct_cost_matrix =
+        [this](const auto & detections) -> std::vector<std::vector<double>> {
+        std::vector<std::vector<double>> matrix;
         for (const auto & tracker : trackers_) {
-          assert(tracker.getRect());
-          row.push_back(getIoU(tracker.getRect().value(), toCVRect(detection.bbox)));
+          std::vector<double> row;
+          for (const auto & detection : detections.detections) {
+            assert(tracker.getRect());
+            row.push_back(1 - getIoU(tracker.getRect().value(), toCVRect(detection.bbox)));
+          }
+          matrix.emplace_back(row);
         }
-        matrix.emplace_back(row);
+        return matrix;
+      };
+      const auto solution = Hungarian(construct_cost_matrix(detections)).solve();
+      /// @note assing tracker
+      size_t detection_index = 0;
+      for (const auto tracker_index : solution.second) {
+        if (tracker_index == -1) {
+          /// @note Detection are exists, but no tracker existing.
+          trackers_.emplace_back(ObjectTracker(
+            TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index], lifetime_));
+        } else {
+          auto tracker_itr = trackers_.begin();
+          std::advance(tracker_itr, tracker_index);
+          if (
+            getIoU(
+              tracker_itr->getRect().value(),
+              toCVRect(detections.detections[detection_index].bbox)) <= iou_threashold) {
+            /// @note Detection and tracker are not associated, so create new tracker.
+            trackers_.emplace_back(ObjectTracker(
+              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
+              lifetime_));
+          } else {
+            /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
+            trackers_.erase(tracker_itr);
+            trackers_.emplace_back(ObjectTracker(
+              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
+              lifetime_));
+          }
+        }
+        detection_index++;
       }
-      return matrix;
-    };
-    Hungarian(construct_cost_matrix(detections));
+    } else {
+      /// @note In this case, n = detections.detections.size(), m = trackers_.size()
+      /// @sa https://kopricky.github.io/code/NetworkFlow/hungarian.html
+      const auto construct_cost_matrix =
+        [this](const auto & detections) -> std::vector<std::vector<double>> {
+        std::vector<std::vector<double>> matrix;
+        for (const auto & detection : detections.detections) {
+          std::vector<double> row;
+          for (const auto & tracker : trackers_) {
+            assert(tracker.getRect());
+            row.push_back(1 - getIoU(tracker.getRect().value(), toCVRect(detection.bbox)));
+          }
+          matrix.emplace_back(row);
+        }
+        return matrix;
+      };
+      const auto solution = Hungarian(construct_cost_matrix(detections)).solve();
+    }
   }
 }
 

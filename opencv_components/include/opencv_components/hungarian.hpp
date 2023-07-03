@@ -37,7 +37,7 @@ private:
     for (int i = 0; i < U; ++i) {
       dual[i] = 0;
       for (int j = 0; j < V; ++j) {
-        dual[U + j] = min(dual[U + j], cost[i][j]);
+        dual[U + j] = std::min(dual[U + j], cost[i][j]);
       }
     }
   }
@@ -161,14 +161,14 @@ public:
         if (prev[i] < 0) continue;
         for (int j = 0; j < V; ++j) {
           if (prev[U + j] >= 0) continue;
-          cand[j] = min(cand[j], {diff(i, j), i});
+          cand[j] = std::min(cand[j], {diff(i, j), i});
         }
       }
       while (true) {
         T delta = std::numeric_limits<T>::max();
         for (int i = 0; i < V; ++i) {
           if (prev[U + i] >= 0) continue;
-          delta = min(delta, cand[i].first);
+          delta = std::min(delta, cand[i].first);
         }
         update_dual(delta);
         std::vector<std::pair<int, int> > vec;

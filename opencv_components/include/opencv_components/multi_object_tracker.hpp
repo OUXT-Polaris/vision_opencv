@@ -36,8 +36,7 @@ public:
     const TrackingMethod method, const cv::Mat & image,
     const perception_msgs::msg::Detection2D & detection,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
-  std::optional<cv::Rect> update(
-    const cv::Mat & image, const perception_msgs::msg::Detection2D & detection);
+  std::optional<cv::Rect> update(const cv::Mat & image, const rclcpp::Time & stamp);
   std::optional<cv::Rect> getRect() const;
   bool isExpired(const rclcpp::Time & stamp) const;
 
@@ -52,8 +51,11 @@ class MultiObjectTracker
 {
 public:
   explicit MultiObjectTracker(
+    const double iou_threashold,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
   void update(const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections);
+  /// @brief IoU threashold for tracker association.
+  const double iou_threashold;
 
 private:
   std::vector<cv::Rect> getRects() const;
