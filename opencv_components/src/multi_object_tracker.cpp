@@ -17,9 +17,10 @@
 namespace opencv_components
 {
 ObjectTracker::ObjectTracker(
-  const TrackingMethod method, const cv::Mat & image,
+  const unique_identifier_msgs::msg::UUID & id, const TrackingMethod method, const cv::Mat & image,
   const perception_msgs::msg::Detection2D & detection, const rclcpp::Duration & lifetime)
-: tracker_([](const auto method) -> cv::Ptr<cv::Tracker> {
+: id(id),
+  tracker_([](const auto method) -> cv::Ptr<cv::Tracker> {
     switch (method) {
       case TrackingMethod::CSRT:
         return cv::TrackerCSRT::create();
@@ -87,8 +88,8 @@ void MultiObjectTracker::update(
   if (rects.empty()) {
     assert(trackers_.size() == 0);
     for (const auto & detection : detections.detections) {
-      trackers_.emplace_back(
-        ObjectTracker(TrackingMethod::DA_SIAM_RPN, image, detection, lifetime_));
+      trackers_.emplace_back(ObjectTracker(
+        detection.detection_id, TrackingMethod::DA_SIAM_RPN, image, detection, lifetime_));
     }
   } else {
     if (trackers_.size() >= detections.detections.size()) {
@@ -114,7 +115,8 @@ void MultiObjectTracker::update(
         /// @note Detection are exists, but no tracker existing.
         if (tracker_index == -1) {
           trackers_.emplace_back(ObjectTracker(
-            TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index], lifetime_));
+            detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN, image,
+            detections.detections[detection_index], lifetime_));
         }
         /// @note Hungarian solver found mathing.
         else {
@@ -126,15 +128,15 @@ void MultiObjectTracker::update(
               tracker_itr->getRect().value(),
               toCVRect(detections.detections[detection_index].bbox)) <= iou_threashold) {
             trackers_.emplace_back(ObjectTracker(
-              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
-              lifetime_));
+              detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN,
+              image, detections.detections[detection_index], lifetime_));
           }
           /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
           else {
             trackers_.erase(tracker_itr);
             trackers_.emplace_back(ObjectTracker(
-              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
-              lifetime_));
+              detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN,
+              image, detections.detections[detection_index], lifetime_));
           }
         }
         detection_index++;
@@ -162,7 +164,8 @@ void MultiObjectTracker::update(
         /// @note New tracking target detected.
         if (detection_index == -1) {
           trackers_.emplace_back(ObjectTracker(
-            TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index], lifetime_));
+            detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN, image,
+            detections.detections[detection_index], lifetime_));
         }
         /// @note Hungarian solver found mathing.
         else {
@@ -174,15 +177,15 @@ void MultiObjectTracker::update(
               tracker_itr->getRect().value(),
               toCVRect(detections.detections[detection_index].bbox)) <= iou_threashold) {
             trackers_.emplace_back(ObjectTracker(
-              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
-              lifetime_));
+              detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN,
+              image, detections.detections[detection_index], lifetime_));
           }
           /// @note Detection and tracker are associated, so remove old tracker and create new tracker.
           else {
             trackers_.erase(tracker_itr);
             trackers_.emplace_back(ObjectTracker(
-              TrackingMethod::DA_SIAM_RPN, image, detections.detections[detection_index],
-              lifetime_));
+              detections.detections[detection_index].detection_id, TrackingMethod::DA_SIAM_RPN,
+              image, detections.detections[detection_index], lifetime_));
           }
         }
         tracker_index++;

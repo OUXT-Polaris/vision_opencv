@@ -23,6 +23,7 @@
 #include <perception_msgs/msg/detection2_d.hpp>
 #include <perception_msgs/msg/detection2_d_array.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <unique_identifier_msgs/msg/uuid.hpp>
 
 namespace opencv_components
 {
@@ -33,12 +34,13 @@ class ObjectTracker
 {
 public:
   explicit ObjectTracker(
-    const TrackingMethod method, const cv::Mat & image,
-    const perception_msgs::msg::Detection2D & detection,
+    const unique_identifier_msgs::msg::UUID & id, const TrackingMethod method,
+    const cv::Mat & image, const perception_msgs::msg::Detection2D & detection,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
   std::optional<cv::Rect> update(const cv::Mat & image, const rclcpp::Time & stamp);
   std::optional<cv::Rect> getRect() const;
   bool isExpired(const rclcpp::Time & stamp) const;
+  const unique_identifier_msgs::msg::UUID id;
 
 private:
   const cv::Ptr<cv::Tracker> tracker_;

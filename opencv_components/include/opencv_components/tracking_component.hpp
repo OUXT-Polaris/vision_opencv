@@ -35,7 +35,7 @@ public:
   virtual ~TrackingComponent();
 
 private:
-  cv::Ptr<cv::Tracker> tracker_;
+  MultiObjectTracker tracker_;
 };
 
 }  // namespace opencv_components
