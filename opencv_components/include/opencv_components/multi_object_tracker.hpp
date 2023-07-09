@@ -22,6 +22,8 @@
 #include <optional>
 #include <perception_msgs/msg/detection2_d.hpp>
 #include <perception_msgs/msg/detection2_d_array.hpp>
+#include <perception_msgs/msg/tracking2_d.hpp>
+#include <perception_msgs/msg/tracking2_d_array.hpp>
 #include <rclcpp/rclcpp.hpp>
 #include <unique_identifier_msgs/msg/uuid.hpp>
 
@@ -37,9 +39,10 @@ public:
     const unique_identifier_msgs::msg::UUID & id, const TrackingMethod method,
     const cv::Mat & image, const perception_msgs::msg::Detection2D & detection,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
-  std::optional<cv::Rect> update(const cv::Mat & image, const rclcpp::Time & stamp);
-  std::optional<cv::Rect> getRect() const;
-  bool isExpired(const rclcpp::Time & stamp) const;
+  auto update(const cv::Mat & image, const rclcpp::Time & stamp) -> std::optional<cv::Rect>;
+  auto getRect() const -> std::optional<cv::Rect>;
+  auto getTrackingMessage() const -> std::optional<perception_msgs::msg::Tracking2D>;
+  auto isExpired() const -> bool;
   const unique_identifier_msgs::msg::UUID id;
 
 private:
@@ -47,6 +50,7 @@ private:
   const rclcpp::Duration lifetime_;
   const rclcpp::Time initialize_timestamp_;
   std::optional<cv::Rect> rect_;
+  rclcpp::Time tracker_timestamp_;
 };
 
 class MultiObjectTracker
@@ -55,7 +59,8 @@ public:
   explicit MultiObjectTracker(
     const double iou_threashold,
     const rclcpp::Duration & lifetime = rclcpp::Duration(std::chrono::milliseconds(100)));
-  void update(const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections);
+  auto update(const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections)
+    -> void;
   /// @brief IoU threashold for tracker association.
   const double iou_threashold;
 

@@ -28,6 +28,7 @@ using BoostRect = boost::geometry::model::box<BoostPoint>;
 using BoostPolygon = boost::geometry::model::polygon<BoostPoint>;
 
 cv::Rect toCVRect(const vision_msgs::msg::BoundingBox2D & msg);
+vision_msgs::msg::BoundingBox2D toROSRect(const cv::Rect & rect);
 BoostRect toBoostRect(const cv::Rect & rect);
 BoostPolygon toBoostPolygon(const cv::Rect & rect);
 double getIoU(const cv::Rect & rect0, const cv::Rect & rect1);

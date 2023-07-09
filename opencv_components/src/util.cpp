@@ -16,6 +16,8 @@
 #include <boost/geometry.hpp>
 #include <boost/geometry/algorithms/disjoint.hpp>
 #include <opencv_components/util.hpp>
+#include <vision_msgs/msg/point2_d.hpp>
+#include <vision_msgs/msg/pose2_d.hpp>
 
 namespace opencv_components
 {
@@ -23,9 +25,20 @@ cv::Rect toCVRect(const vision_msgs::msg::BoundingBox2D & msg)
 {
   return cv::Rect(
     static_cast<int>(msg.center.position.x - 0.5 * msg.size_x),
-    static_cast<int>(msg.center.position.y - 0.5 * msg.size_y),
-    static_cast<int>(msg.center.position.x + 0.5 * msg.size_x),
-    static_cast<int>(msg.center.position.y + 0.5 * msg.size_y));
+    static_cast<int>(msg.center.position.y - 0.5 * msg.size_y), static_cast<int>(msg.size_x),
+    static_cast<int>(msg.size_y));
+}
+
+vision_msgs::msg::BoundingBox2D toROSRect(const cv::Rect & rect)
+{
+  return vision_msgs::build<vision_msgs::msg::BoundingBox2D>()
+    .center(vision_msgs::build<vision_msgs::msg::Pose2D>()
+              .position(vision_msgs::build<vision_msgs::msg::Point2D>()
+                          .x(rect.x + rect.width * 0.5)
+                          .y(rect.y + rect.height * 0.5))
+              .theta(0))
+    .size_x(rect.width)
+    .size_y(rect.height);
 }
 
 BoostRect toBoostRect(const cv::Rect & rect)
