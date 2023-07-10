@@ -17,7 +17,13 @@
 namespace opencv_components
 {
 TrackingComponent::TrackingComponent(const rclcpp::NodeOptions & options)
-: rclcpp::Node("tracking_node", options), tracker_(0.5)
+: rclcpp::Node("tracking_node", options),
+  tracker_(0.5),
+  image_sub_(this, "image"),
+  detections_sub_(this, "detections_2d"),
+  synchronizer_(std::make_unique<message_filters::TimeSynchronizer<
+                  sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>>(
+    image_sub_, detections_sub_, 10))
 {
 }
 

@@ -15,6 +15,10 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 #define OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 
+#include <message_filters/subscriber.h>
+#include <message_filters/sync_policies/exact_time.h>
+#include <message_filters/time_synchronizer.h>
+
 #include <atomic>
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
@@ -35,7 +39,15 @@ public:
   virtual ~TrackingComponent();
 
 private:
+  void detectionCallback(
+    const sensor_msgs::msg::Image & image,
+    const perception_msgs::msg::Detection2DArray & detections);
   MultiObjectTracker tracker_;
+  message_filters::Subscriber<sensor_msgs::msg::Image> image_sub_;
+  message_filters::Subscriber<perception_msgs::msg::Detection2DArray> detections_sub_;
+  std::unique_ptr<message_filters::TimeSynchronizer<
+    sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>>
+    synchronizer_;
 };
 
 }  // namespace opencv_components
