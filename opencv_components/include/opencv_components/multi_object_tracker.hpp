@@ -48,7 +48,7 @@ public:
 private:
   const cv::Ptr<cv::Tracker> tracker_;
   const rclcpp::Duration lifetime_;
-  const rclcpp::Time initialize_timestamp_;
+  const perception_msgs::msg::Detection2D initial_detection_;
   std::optional<cv::Rect> rect_;
   rclcpp::Time tracker_timestamp_;
 };
@@ -63,6 +63,7 @@ public:
     -> void;
   /// @brief IoU threashold for tracker association.
   const double iou_threashold;
+  auto getTrackingMessages() const -> std::vector<perception_msgs::msg::Tracking2D>;
 
 private:
   std::vector<cv::Rect> getRects() const;

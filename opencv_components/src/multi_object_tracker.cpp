@@ -42,16 +42,15 @@ ObjectTracker::ObjectTracker(
     }
   }(method)),
   lifetime_(lifetime),
-  initialize_timestamp_(detection.header.stamp),
-  rect_(toCVRect(detection.bbox)),
-  tracker_timestamp_(initialize_timestamp_)
+  initial_detection_(detection),
+  rect_(toCVRect(detection.bbox))
 {
   tracker_->init(image, toCVRect(detection.bbox));
 }
 
 auto ObjectTracker::isExpired() const -> bool
 {
-  return (tracker_timestamp_ - initialize_timestamp_) >= lifetime_;
+  return (tracker_timestamp_ - initial_detection_.header.stamp) >= lifetime_;
 }
 
 auto ObjectTracker::update(const cv::Mat & image, const rclcpp::Time & stamp)
@@ -69,10 +68,15 @@ auto ObjectTracker::getRect() const -> std::optional<cv::Rect> { return rect_; }
 
 auto ObjectTracker::getTrackingMessage() const -> std::optional<perception_msgs::msg::Tracking2D>
 {
-  perception_msgs::build<perception_msgs::msg::Tracking2D>()
-    .header(std_msgs::build<std_msgs::msg::Header>().stamp(tracker_timestamp_).frame_id(""))
-    .tracking_id(id);
-  return rect_ ? perception_msgs::msg::Tracking2D()
+  return rect_ ? perception_msgs::build<perception_msgs::msg::Tracking2D>()
+                   .header(std_msgs::build<std_msgs::msg::Header>()
+                             .stamp(tracker_timestamp_)
+                             .frame_id(initial_detection_.header.frame_id))
+                   .tracking_id(id)
+                   .bbox(toROSRect(rect_.value()))
+                   .bbox_3d(initial_detection_.bbox_3d)
+                   .label(initial_detection_.label)
+                   .score(initial_detection_.score)
                : std::optional<perception_msgs::msg::Tracking2D>();
 }
 
@@ -216,5 +220,17 @@ std::vector<cv::Rect> MultiObjectTracker::getRects() const
     }
   }
   return rects;
+}
+
+auto MultiObjectTracker::getTrackingMessages() const
+  -> std::vector<perception_msgs::msg::Tracking2D>
+{
+  std::vector<perception_msgs::msg::Tracking2D> tracking_messages;
+  for (const auto & tracker : trackers_) {
+    if (const auto tracking_message = tracker.getTrackingMessage()) {
+      tracking_messages.emplace_back(tracking_message.value());
+    }
+  }
+  return tracking_messages;
 }
 }  // namespace opencv_components
