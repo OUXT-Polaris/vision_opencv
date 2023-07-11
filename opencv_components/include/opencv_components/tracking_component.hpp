@@ -40,13 +40,12 @@ public:
 
 private:
   void detectionCallback(
-    const sensor_msgs::msg::Image & image,
-    const perception_msgs::msg::Detection2DArray & detections);
+    const sensor_msgs::msg::Image::ConstSharedPtr image,
+    const perception_msgs::msg::Detection2DArray::ConstSharedPtr detections);
   MultiObjectTracker tracker_;
   message_filters::Subscriber<sensor_msgs::msg::Image> image_sub_;
   message_filters::Subscriber<perception_msgs::msg::Detection2DArray> detections_sub_;
-  std::unique_ptr<message_filters::TimeSynchronizer<
-    sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>>
+  message_filters::TimeSynchronizer<sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>
     synchronizer_;
 };
 

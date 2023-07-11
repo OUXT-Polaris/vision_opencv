@@ -89,6 +89,7 @@ MultiObjectTracker::MultiObjectTracker(
 auto MultiObjectTracker::update(
   const cv::Mat & image, const perception_msgs::msg::Detection2DArray & detections) -> void
 {
+  latest_header_ = detections.header;
   /// @note Update tracker
   for (auto tracker : trackers_) {
     tracker.update(image, detections.header.stamp);
@@ -222,15 +223,18 @@ std::vector<cv::Rect> MultiObjectTracker::getRects() const
   return rects;
 }
 
-auto MultiObjectTracker::getTrackingMessages() const
-  -> std::vector<perception_msgs::msg::Tracking2D>
+auto MultiObjectTracker::getTrackingMessages() const -> perception_msgs::msg::Tracking2DArray
 {
-  std::vector<perception_msgs::msg::Tracking2D> tracking_messages;
-  for (const auto & tracker : trackers_) {
-    if (const auto tracking_message = tracker.getTrackingMessage()) {
-      tracking_messages.emplace_back(tracking_message.value());
-    }
-  }
-  return tracking_messages;
+  return perception_msgs::build<perception_msgs::msg::Tracking2DArray>()
+    .header(latest_header_)
+    .trackings([this]() {
+      std::vector<perception_msgs::msg::Tracking2D> tracking_messages;
+      for (const auto & tracker : trackers_) {
+        if (const auto tracking_message = tracker.getTrackingMessage()) {
+          tracking_messages.emplace_back(tracking_message.value());
+        }
+      }
+      return tracking_messages;
+    }());
 }
 }  // namespace opencv_components

@@ -63,12 +63,13 @@ public:
     -> void;
   /// @brief IoU threashold for tracker association.
   const double iou_threashold;
-  auto getTrackingMessages() const -> std::vector<perception_msgs::msg::Tracking2D>;
+  auto getTrackingMessages() const -> perception_msgs::msg::Tracking2DArray;
 
 private:
   std::vector<cv::Rect> getRects() const;
   const rclcpp::Duration lifetime_;
   std::list<ObjectTracker> trackers_;
+  std_msgs::msg::Header latest_header_;
 };
 }  // namespace opencv_components
 

@@ -21,12 +21,24 @@ TrackingComponent::TrackingComponent(const rclcpp::NodeOptions & options)
   tracker_(0.5),
   image_sub_(this, "image"),
   detections_sub_(this, "detections_2d"),
-  synchronizer_(std::make_unique<message_filters::TimeSynchronizer<
-                  sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>>(
+  synchronizer_(message_filters::TimeSynchronizer<
+                sensor_msgs::msg::Image, perception_msgs::msg::Detection2DArray>(
     image_sub_, detections_sub_, 10))
 {
+  synchronizer_.registerCallback(std::bind(
+    &TrackingComponent::detectionCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 TrackingComponent::~TrackingComponent() {}
+
+void TrackingComponent::detectionCallback(
+  const sensor_msgs::msg::Image::ConstSharedPtr image_msg,
+  const perception_msgs::msg::Detection2DArray::ConstSharedPtr detections_msg)
+{
+  cv_bridge::CvImage bridge;
+  sensor_msgs::msg::Image image = *image_msg.get();
+  bridge.toImageMsg(image);
+  tracker_.update(bridge.image, *detections_msg.get());
+}
 
 }  // namespace opencv_components
