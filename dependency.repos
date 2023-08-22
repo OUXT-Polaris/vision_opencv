@@ -1,4 +1,3 @@
-
 repositories:
     perception_msgs:
         type: git
