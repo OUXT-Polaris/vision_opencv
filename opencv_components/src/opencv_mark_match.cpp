@@ -17,11 +17,10 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 {
   cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
-    // =Mat
   const cv::Mat image_cv = cv_bridge::toCvShare(image)->image;
   
   while(true){
-    cv::imshow("draw",bridge.image);
+    cv::imshow("draw",image_cv);
     if(cv::waitKey(1) >= 0) break;
   }
 }
