@@ -35,6 +35,7 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
+  cv::Mat src,src2,dst,mediam,fusion[3];
 };
 
 }  // namespace match_components

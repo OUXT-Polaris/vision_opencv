@@ -19,6 +19,12 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   sensor_msgs::msg::Image image = *image_msg.get();
   bridge.toImageMsg(image);
 
-  bridge.image;  // =Mat
+    // =Mat
+
+  while(true){
+    cv::imshow("draw",bridge.image);
+    if(cv::waitKey(1) >= 0) break;
+  }
+
 }
 }  // namespace match_components
