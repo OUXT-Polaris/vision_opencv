@@ -33,10 +33,10 @@ public:
   virtual ~OpenCVMatchComponent();
 
 private:
-  rclcpp::Subscription<sensor_msgs::msg::Image> image_sub_;
-  void call_back(const sensor_msgs::msg::Image::ConstSharedPtr image_msg);
+  rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
+  void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
 };
 
-}  // namespace opencv_components
+}  // namespace match_components
 
 #endif  // OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
