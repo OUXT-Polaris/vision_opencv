@@ -36,6 +36,9 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
   cv::Mat src,src2,dst,mediam,fusion[3];
+  cv::Mat drawing;
+  std::vector<std::vector<cv::Point> > contours2;
+  double match;
 };
 
 }  // namespace match_components
