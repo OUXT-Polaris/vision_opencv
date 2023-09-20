@@ -38,11 +38,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 
   cv::threshold(mediam,dst,0,255,cv::THRESH_OTSU);
 
-  if(dst){
-    
-  }
-
-  cv::findContours(dst, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+  cv::findContours(dst, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);//ここでエラー
 
   image_pub_.publish(
         cv_bridge::CvImage(std_msgs::msg::Header(), "mono8", dst).toImageMsg(),
