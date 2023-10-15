@@ -34,7 +34,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   
   cv::dilate(sample, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
-  std::cout << "picture" << std::endl;
+  std::cout << "ここまでok" << std::endl;
   
   cv::erode(temp, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
   cv::dilate(temp, temp, cv::Mat(), cv::Point(-1,-1), 3);
