@@ -8,46 +8,48 @@ OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
   image_pub_(this, "image_")
 {
   using namespace std::chrono_literals;
-  update_position_timer_ =
-    this->create_wall_timer(10ms, std::bind(&OpenCVMatchComponent::call_back, this));
+  /*update_position_timer_ =
+    this->create_wall_timer(10ms, std::bind(&OpenCVMatchComponent::call_back, this));*/
 
-  /*image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
+  image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
     "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
       call_back(image);
-    });*/  //1,引数の型２，トピック名３，バッファサイズ４，関数オブジェクと
+    });  //1,引数の型２，トピック名３，バッファサイズ４，関数オブジェクと
 
   
 }  //ラムダは関数オブジェクト
 
 OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
-void OpenCVMatchComponent::call_back()
+void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg)
 {
-  //const sensor_msgs::msg::Image::SharedPtr image_msg
-
   std::vector<std::vector<cv::Point> > sample_contours,contours,contours2,contours3;
   std::vector<cv::Vec4i> hierarchy;
-  cv::Mat sample,img_hsv,dst,mediam,img_split[3],temp;
+  cv::Mat sample,img_hsv,dst,mediam,img_split[3],temp,edge;
 
-  /*cv_bridge::CvImage bridge;
+  std::cout << "ここまでok" << std::endl;
+
+  std::string picture_filename = ament_index_cpp::get_package_share_directory(package_name) + "/picture/red_triangle.jpg";
+
+  cv::imread(picture_filename,0).copyTo(sample);
+
+  cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
-  const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;*/
-
-  cv::imread("/home/yuasa/vision_test/picture/demo2.jpg",0).copyTo(sample);
+  const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;
 
   if(sample.empty())std::cout << "no picture" << std::endl;
-  //if(image_cv.empty())std::cout << "no movie" << std::endl;
+  if(image_cv.empty())std::cout << "no movie" << std::endl;
   
   cv::dilate(sample, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
-  std::cout << "ここまでok" << std::endl;
+  //std::cout << "ここまでok" << std::endl;
   
-  cv::erode(temp, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
+  cv::erode(edge, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
   cv::dilate(temp, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
   cv::findContours(temp, sample_contours, hierarchy,  cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
   
-  /*cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
+  cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
 
   cv::split(img_hsv,img_split);
 
@@ -87,6 +89,6 @@ void OpenCVMatchComponent::call_back()
 
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
-    std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));*/
+    std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
   }
 }  // namespace match_components

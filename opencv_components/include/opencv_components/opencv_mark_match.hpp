@@ -36,8 +36,8 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
-    rclcpp::TimerBase::SharedPtr update_position_timer_;
-  void call_back();
+  //  rclcpp::TimerBase::SharedPtr update_position_timer_;
+  void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
   //const sensor_msgs::msg::Image::SharedPtr image_msg
   
   cv::Mat drawing;
