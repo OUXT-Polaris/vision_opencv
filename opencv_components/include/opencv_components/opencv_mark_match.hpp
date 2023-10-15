@@ -18,6 +18,7 @@
 #include <atomic>
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
 
@@ -36,7 +37,8 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
-  cv::Mat sample,img_hsv,dst,mediam,img_split[3];
+  //
+  
   cv::Mat drawing;
   double match;
 };

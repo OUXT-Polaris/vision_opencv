@@ -1,5 +1,6 @@
 
 #include <opencv_components/opencv_mark_match.hpp>
+
 namespace match_components
 {
 OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
@@ -18,16 +19,28 @@ OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
 void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg)
 {
+  std::vector<std::vector<cv::Point> > sample_contours,contours,contours2,contours3;
+  std::vector<cv::Vec4i> hierarchy;
+  cv::Mat sample,img_hsv,dst,mediam,img_split[3],temp;
+
   cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
   const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;
 
-  cv::imread("demo2.jpg",0).copyTo(sample);
+  cv::imread("/home/yuasa/vision_test/picture/demo2.jpg",0).copyTo(sample);
 
-  std::vector<std::vector<cv::Point> > contours,sample_contours,contours2,contours3;
+  if(sample.empty())std::cout << "no picture" << std::endl;
+  if(image_cv.empty())std::cout << "no movie" << std::endl;
+  
+  cv::dilate(sample, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
-  //cv::findContours(sample, sample_contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE );
+  std::cout << "picture" << std::endl;
+  
+  cv::erode(temp, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
+  cv::dilate(temp, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
+  cv::findContours(temp, sample_contours, hierarchy,  cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
+  
   cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
 
   cv::split(img_hsv,img_split);
@@ -59,11 +72,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
     if(90 < cv::contourArea(contours2[i]))contours3.push_back(contours2[i]);
   }
 
-  //cv::Mat drawing = cv::Mat::zeros(dst.size(), CV_8UC3);
-
-  cv::Mat drawing;
-
-  std::cout << "koko" << std::endl;
+  cv::Mat drawing = cv::Mat::zeros(dst.size(), CV_8UC3);
 
   for( size_t i = 0; i< contours3.size(); i++ ) {
     cv::Scalar color = cv::Scalar(255, 0, 0);

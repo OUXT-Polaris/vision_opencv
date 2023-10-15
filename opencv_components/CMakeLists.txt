@@ -63,4 +63,6 @@ target_link_libraries(tracking_node
 #   DESTINATION share/${PROJECT_NAME}
 # )
 
+add_compile_options(-g)
+
 ament_auto_package()
