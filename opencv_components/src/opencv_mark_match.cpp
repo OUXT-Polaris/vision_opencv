@@ -21,8 +21,10 @@ OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
 
 OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
-void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg)
+void OpenCVMatchComponent::call_back()
 {
+  //const sensor_msgs::msg::Image::SharedPtr image_msg
+
   std::vector<std::vector<cv::Point> > sample_contours,contours,contours2,contours3;
   std::vector<cv::Vec4i> hierarchy;
   cv::Mat sample,img_hsv,dst,mediam,img_split[3],temp;
@@ -34,7 +36,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   cv::imread("/home/yuasa/vision_test/picture/demo2.jpg",0).copyTo(sample);
 
   if(sample.empty())std::cout << "no picture" << std::endl;
-  if(image_cv.empty())std::cout << "no movie" << std::endl;
+  //if(image_cv.empty())std::cout << "no movie" << std::endl;
   
   cv::dilate(sample, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
