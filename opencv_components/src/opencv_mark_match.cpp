@@ -7,10 +7,14 @@ OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
 : rclcpp::Node("opencv_mark_match", options),
   image_pub_(this, "image_")
 {
-  image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
+  using namespace std::chrono_literals;
+  update_position_timer_ =
+    this->create_wall_timer(10ms, std::bind(&NaviSimComponent::updatePose, this));
+
+  /*image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
     "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
       call_back(image);
-    });  //1,引数の型２，トピック名３，バッファサイズ４，関数オブジェクと
+    });*/  //1,引数の型２，トピック名３，バッファサイズ４，関数オブジェクと
 
   
 }  //ラムダは関数オブジェクト
@@ -23,9 +27,9 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   std::vector<cv::Vec4i> hierarchy;
   cv::Mat sample,img_hsv,dst,mediam,img_split[3],temp;
 
-  cv_bridge::CvImage bridge;
+  /*cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
-  const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;
+  const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;*/
 
   cv::imread("/home/yuasa/vision_test/picture/demo2.jpg",0).copyTo(sample);
 
@@ -41,7 +45,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 
   cv::findContours(temp, sample_contours, hierarchy,  cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
   
-  cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
+  /*cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
 
   cv::split(img_hsv,img_split);
 
@@ -82,5 +86,5 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
-  }
+  }*/
 }  // namespace match_components
