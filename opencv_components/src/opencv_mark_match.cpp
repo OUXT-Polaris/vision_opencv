@@ -9,7 +9,7 @@ OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
 {
   using namespace std::chrono_literals;
   update_position_timer_ =
-    this->create_wall_timer(10ms, std::bind(&NaviSimComponent::updatePose, this));
+    this->create_wall_timer(10ms, std::bind(&OpenCVMatchComponent::call_back, this));
 
   /*image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
     "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
