@@ -11,10 +11,8 @@ OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
   image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
     "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
       call_back(image);
-    });  //1,引数の型２，トピック名３，バッファサイズ４，関数オブジェクと
-
-  
-}  //ラムダは関数オブジェクト
+    }); 
+}
 
 OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
@@ -30,8 +28,8 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 
   const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;
 
-  if(sample.empty())std::cout << "no picture" << std::endl;
-  if(image_cv.empty())std::cout << "no movie" << std::endl;
+  if(sample.empty())RCLCPP_INFO_STREAM(this->get_logger(), "no picture");
+  if(image_cv.empty())RCLCPP_INFO_STREAM(this->get_logger(),"no movie");
 
   cv::cvtColor(sample,sample_hsv,cv::COLOR_BGR2HSV_FULL);
 
@@ -89,5 +87,5 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
-  }  // namespace match_components
+  }
 }
