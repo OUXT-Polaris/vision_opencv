@@ -37,7 +37,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 
   cv::split(sample_hsv,sample_split);
 
-  cv::dilate(sample_split[2], temp, cv::Mat(), cv::Point(-1,-1), 3);  
+  cv::dilate(sample_split[2], temp, cv::Mat(), cv::Point(-1,-1), 3);
   cv::erode(temp, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
   cv::dilate(temp, temp, cv::Mat(), cv::Point(-1,-1), 3);
 
@@ -61,7 +61,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
        match = cv::matchShapes(contours[u],sample_contours[f],cv::CONTOURS_MATCH_I1,0);
       if(match < 0.15)
       {
-       p = 1;
+        p = 1;
       }
     }
 
@@ -71,8 +71,12 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   }
 
   for( size_t i = 0; i < contours2.size(); i++ ) {
-    if(90 < cv::contourArea(contours2[i]) && (1000 > cv::contourArea(contours2[i])))contours3.push_back(contours2[i]);
-    
+    if(500 < cv::contourArea(contours2[i]))
+    {
+      if(4000 > cv::contourArea(contours2[i])){
+        contours3.push_back(contours2[i]);
+      }
+    }
   }
 
   cv::Mat drawing = cv::Mat::zeros(dst.size(), CV_8UC3);
@@ -85,5 +89,5 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
-}  // namespace match_components
+  }  // namespace match_components
 }
