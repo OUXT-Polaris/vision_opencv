@@ -21,6 +21,7 @@
 #include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
+#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include "opencv_components/visibility_control.h"
 
@@ -36,10 +37,11 @@ public:
 private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
-  //  rclcpp::TimerBase::SharedPtr update_position_timer_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
-  //const sensor_msgs::msg::Image::SharedPtr image_msg
   
+  std::vector<cv::Vec4i> hierarchy;
+  cv::Mat sample,sample_hsv,sample_split[3],img_hsv,dst,mediam,img_split[3],temp,edge;
+
   cv::Mat drawing;
   double match;
 };
