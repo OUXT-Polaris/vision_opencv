@@ -4,5 +4,5 @@ opencv_camera_components:
     default_value: 0,
     read_only: true,
     description: "ID of the camera you want to get images.",
-    validation: { lower_bounds<>: [0] },
+    validation: { gt_eq<>: [0.0] },
   }

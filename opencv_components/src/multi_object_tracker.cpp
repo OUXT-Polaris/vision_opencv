@@ -59,7 +59,11 @@ auto ObjectTracker::update(const cv::Mat & image, const rclcpp::Time & stamp)
   tracker_timestamp_ = stamp;
   const auto update_tracker = [this](const auto & image) {
     auto rect = cv::Rect();
-    return tracker_->update(image, rect) ? [this](const auto & rect){rect_ = rect; return rect;}(rect) : std::optional<cv::Rect>();
+    return tracker_->update(image, rect) ? [this](const auto & rect) {
+      rect_ = rect;
+      return rect;
+    }(rect)
+                                         : std::optional<cv::Rect>();
   };
   return isExpired() ? std::optional<cv::Rect>() : update_tracker(image);
 }
