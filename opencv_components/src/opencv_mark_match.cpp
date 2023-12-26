@@ -1,77 +1,71 @@
 
-#include <opencv_components/opencv_mark_match.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <opencv_components/opencv_mark_match.hpp>
 
 namespace match_components
 {
 OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
-: rclcpp::Node("opencv_mark_match", options),
-  image_pub_(this, "image_")
+: rclcpp::Node("opencv_mark_match", options), image_pub_(this, "image_")
 {
-  image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
-    "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
-      call_back(image);
-    }); 
+  image_sub_ = create_subscription<sensor_msgs::msg::Image>(
+    "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) { call_back(image); });
 }
 
 OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
-void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg){
-
-  std::string picture_filename = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/red_triangle.jpg";
+void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg)
+{
+  std::string picture_filename =
+    ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/red_triangle.jpg";
 
   cv::imread(picture_filename).copyTo(sample);
 
   cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
-  std::vector<std::vector<cv::Point> > sample_contours,contours,contours2,contours3;
+  std::vector<std::vector<cv::Point> > sample_contours, contours, contours2, contours3;
 
   const cv::Mat image_cv = cv_bridge::toCvCopy(image_msg)->image;
 
-  if(sample.empty())RCLCPP_INFO_STREAM(this->get_logger(), "no picture");
-  if(image_cv.empty())RCLCPP_INFO_STREAM(this->get_logger(),"no movie");
+  if (sample.empty()) RCLCPP_INFO_STREAM(this->get_logger(), "no picture");
+  if (image_cv.empty()) RCLCPP_INFO_STREAM(this->get_logger(), "no movie");
 
-  cv::cvtColor(sample,sample_hsv,cv::COLOR_BGR2HSV_FULL);
+  cv::cvtColor(sample, sample_hsv, cv::COLOR_BGR2HSV_FULL);
 
-  cv::split(sample_hsv,sample_split);
+  cv::split(sample_hsv, sample_split);
 
-  cv::dilate(sample_split[2], temp, cv::Mat(), cv::Point(-1,-1), 3);
-  cv::erode(temp, temp, cv::Mat(), cv::Point(-1,-1), 3*2);
-  cv::dilate(temp, temp, cv::Mat(), cv::Point(-1,-1), 3);
+  cv::dilate(sample_split[2], temp, cv::Mat(), cv::Point(-1, -1), 3);
+  cv::erode(temp, temp, cv::Mat(), cv::Point(-1, -1), 3 * 2);
+  cv::dilate(temp, temp, cv::Mat(), cv::Point(-1, -1), 3);
 
-  cv::findContours(temp, sample_contours, hierarchy,  cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
-  
-  cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
+  cv::findContours(temp, sample_contours, hierarchy, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-  cv::split(img_hsv,img_split);
+  cv::cvtColor(image_cv, img_hsv, cv::COLOR_BGR2HSV_FULL);
 
-  cv::medianBlur(img_split[2],mediam,3);
+  cv::split(img_hsv, img_split);
 
-  cv::threshold(mediam,dst,0,255,cv::THRESH_OTSU);
+  cv::medianBlur(img_split[2], mediam, 3);
+
+  cv::threshold(mediam, dst, 0, 255, cv::THRESH_OTSU);
 
   cv::findContours(dst, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
-  for(int u = 0;u < contours.size();u++)
-  {
+  for (int u = 0; u < contours.size(); u++) {
     int p = 0;
-    for(int f = 0;f < sample_contours.size();f++)
-    {
-       match = cv::matchShapes(contours[u],sample_contours[f],cv::CONTOURS_MATCH_I1,0);
-      if(match < 0.15)
-      {
+    for (int f = 0; f < sample_contours.size(); f++) {
+      match = cv::matchShapes(contours[u], sample_contours[f], cv::CONTOURS_MATCH_I1, 0);
+      if (match < 0.15) {
         p = 1;
       }
     }
 
-    if(p != 0){
+    if (p != 0) {
       contours2.push_back(contours[u]);
     }
   }
 
-  for( size_t i = 0; i < contours2.size(); i++ ) {
-    if(500 < cv::contourArea(contours2[i]))
-    {
-      if(4000 > cv::contourArea(contours2[i])){
+  for (size_t i = 0; i < contours2.size(); i++) {
+    if (500 < cv::contourArea(contours2[i])) {
+      if (4000 > cv::contourArea(contours2[i])) {
         contours3.push_back(contours2[i]);
       }
     }
@@ -79,7 +73,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
 
   cv::Mat drawing = cv::Mat::zeros(dst.size(), CV_8UC3);
 
-  for( size_t i = 0; i< contours3.size(); i++ ) {
+  for (size_t i = 0; i < contours3.size(); i++) {
     cv::Scalar color = cv::Scalar(255, 0, 0);
     cv::drawContours(drawing, contours3, (int)i, color);
   }
@@ -87,5 +81,5 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
-  }
 }
+}  // namespace match_components
