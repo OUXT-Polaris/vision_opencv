@@ -18,13 +18,13 @@ OpenCVMatchComponent::~OpenCVMatchComponent() {}
 
 void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr image_msg){
 
-  std::string picture_filename = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/red_triangle.jpg";
-  std::string picture_filename2 = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/circle.jpg";
-  std::string picture_filename3 = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/cross.jpg";
+  std::string triangle = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/red_triangle.jpg";
+  std::string circle = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/circle.jpg";
+  std::string cross = ament_index_cpp::get_package_share_directory("opencv_components") + "/picture/cross.jpg";
 
-  cv::imread(picture_filename).copyTo(sample[0]);
-  cv::imread(picture_filename2).copyTo(sample[1]);
-  cv::imread(picture_filename3).copyTo(sample[2]);
+  cv::imread(triangle).copyTo(sample[0]);
+  cv::imread(circle).copyTo(sample[1]);
+  cv::imread(cross).copyTo(sample[2]);
 
   cv_bridge::CvImage bridge;
   sensor_msgs::msg::Image image = *image_msg.get();
