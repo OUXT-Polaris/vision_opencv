@@ -15,13 +15,13 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 #define OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <atomic>
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
-#include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include "opencv_components/visibility_control.h"
 
@@ -38,10 +38,8 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
-  
   std::vector<cv::Vec4i> hierarchy[3];
   cv::Mat sample[3],sample_hsv[3],sample_split[3][3],img_hsv,dst,mediam,img_split[3],temp,edge;
-
   cv::Mat drawing;
   double match;
 };
