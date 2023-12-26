@@ -50,6 +50,7 @@ ament_auto_add_executable(opencv_mark_match
 target_link_libraries(opencv_mark_match
   ${PROJECT_NAME}
 )
+install(DIRECTORY picture DESTINATION share/${PROJECT_NAME})
 
 ament_auto_add_executable(tracking_node
   src/tracking_node.cpp
