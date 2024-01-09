@@ -39,8 +39,9 @@ private:
   image_transport::CameraPublisher image_pub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
   
-  std::vector<cv::Vec4i> hierarchy[3];
-  cv::Mat sample[3],sample_hsv[3],sample_split[3][3],img_hsv,dst,mediam,img_split[3],temp,edge;
+  std::vector<cv::Vec4i> triangle_hierarchy,circle_hierarchy,cross_hierarchy;
+  cv::Mat sample_circle,sample_cross,sample_triangle,triangle_hsv,circle_hsv,cross_hsv,triangle_split[3],circle_split[3],cross_split[3],
+          img_hsv,dst,mediam,img_split[3],temp,edge;
 
   cv::Mat drawing;
   double match;
