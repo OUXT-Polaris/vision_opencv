@@ -1,17 +1,14 @@
 
-#include <opencv_components/opencv_mark_match.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
+#include <opencv_components/opencv_mark_match.hpp>
 
 namespace match_components
 {
 OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
-: rclcpp::Node("opencv_mark_match", options),
-  image_pub_(this, "image_")
+: rclcpp::Node("opencv_mark_match", options), image_pub_(this, "image_")
 {
-  image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
-    "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) {
-      call_back(image);
-    }); 
+  image_sub_ = create_subscription<sensor_msgs::msg::Image>(
+    "camera", 1, [this](const sensor_msgs::msg::Image::SharedPtr image) { call_back(image); });
 }
 
 OpenCVMatchComponent::~OpenCVMatchComponent() {}
@@ -69,9 +66,12 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   
   cv::cvtColor(image_cv,img_hsv,cv::COLOR_BGR2HSV_FULL);
 
-  cv::split(img_hsv,img_split);
+  cv::cvtColor(image_cv, img_hsv, cv::COLOR_BGR2HSV_FULL);
+
+  cv::split(img_hsv, img_split);
 
   cv::Canny(img_split[2],dst,85,85);
+
 
   cv::findContours(dst, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
@@ -119,6 +119,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   cv::Mat drawing = cv::Mat::zeros(dst.size(), CV_8UC3);
 
   for( size_t i = 0; i< selected_contours.size(); i++ ) {
+
     cv::Scalar color = cv::Scalar(255, 0, 0);
     cv::drawContours(drawing, selected_contours, (int)i, color);
   }
@@ -126,5 +127,5 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   image_pub_.publish(
     cv_bridge::CvImage(std_msgs::msg::Header(), "bgr8", drawing).toImageMsg(),
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
-  }
 }
+}  // namespace match_components
