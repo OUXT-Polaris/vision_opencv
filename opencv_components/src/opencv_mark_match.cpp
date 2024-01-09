@@ -6,6 +6,8 @@ namespace match_components
 {
 OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
 : rclcpp::Node("opencv_mark_match", options),
+  parameter_listener_(get_node_parameters_interface()),
+  parameters_(parameter_listener_.get_params()),
   image_pub_(this, "image_")
 {
   image_sub_ =   create_subscription<sensor_msgs::msg::Image>(
@@ -76,30 +78,30 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   cv::findContours(dst, contours, cv::RETR_TREE, cv::CHAIN_APPROX_SIMPLE);
 
   
-  for(int u = 0;u < contours.size();u++)
+  for(size_t u = 0;u < contours.size();u++)
   {
-    for(int f = 0;f < triangle_contours.size();f++)
+    for(size_t f = 0;f < triangle_contours.size();f++)
     {
       match = cv::matchShapes(contours[u],triangle_contours[f],cv::CONTOURS_MATCH_I1,0);
-      if(1.5>match)//近似閾値
+      if(parameters_.similarity > match)//近似閾値
       {
         matched_contours.push_back(contours[u]);
       }
     }
 
-    for(int f = 0;f < circle_contours.size();f++)
+    for(size_t f = 0;f < circle_contours.size();f++)
     {
       match = cv::matchShapes(contours[u],circle_contours[f],cv::CONTOURS_MATCH_I1,0);
-      if(1.5>match)//近似閾値
+      if(parameters_.similarity > match)//近似閾値
       {
         matched_contours.push_back(contours[u]);
       }
     }
 
-    for(int f = 0;f < cross_contours.size();f++)
+    for(size_t f = 0;f < cross_contours.size();f++)
     {
       match = cv::matchShapes(contours[u],cross_contours[f],cv::CONTOURS_MATCH_I1,0);
-      if(1.5>match)//近似閾値
+      if(parameters_.similarity > match)//近似閾値
       {
         matched_contours.push_back(contours[u]);
       }
@@ -108,9 +110,9 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
   
 
   for( size_t f = 0; f < matched_contours.size(); f++ ) {
-    if(80 < cv::contourArea(matched_contours[f]))//最小面積閾値
+    if(parameters_.min_area < cv::contourArea(matched_contours[f]))//最小面積閾値
     {
-      if(18000 > cv::contourArea(matched_contours[f])){//最大面積閾値
+      if(parameters_.max_area > cv::contourArea(matched_contours[f])){//最大面積閾値
         selected_contours.push_back(matched_contours[f]);
       }
     }
