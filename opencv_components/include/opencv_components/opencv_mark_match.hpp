@@ -15,13 +15,13 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 #define OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 
+#include <ament_index_cpp/get_package_share_directory.hpp>
 #include <atomic>
 #include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
-#include <opencv4/opencv2/opencv.hpp>
 #include <opencv2/opencv.hpp>
+#include <opencv4/opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
-#include <ament_index_cpp/get_package_share_directory.hpp>
 
 #include <opencv_match_parameters.hpp>
 
@@ -42,10 +42,11 @@ private:
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);
-  
-  std::vector<cv::Vec4i> triangle_hierarchy,circle_hierarchy,cross_hierarchy;
-  cv::Mat sample_circle,sample_cross,sample_triangle,triangle_hsv,circle_hsv,cross_hsv,triangle_split[3],circle_split[3],cross_split[3],
-          img_hsv,dst,mediam,img_split[3],temp,edge;
+
+  std::vector<cv::Vec4i> triangle_hierarchy, circle_hierarchy, cross_hierarchy;
+  cv::Mat sample_circle, sample_cross, sample_triangle, triangle_hsv, circle_hsv, cross_hsv,
+    triangle_split[3], circle_split[3], cross_split[3], img_hsv, dst, mediam, img_split[3], temp,
+    edge;
 
   cv::Mat drawing;
   double match;
