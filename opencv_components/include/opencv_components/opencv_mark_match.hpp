@@ -23,6 +23,8 @@
 #include <opencv4/opencv2/opencv.hpp>
 #include <rclcpp/rclcpp.hpp>
 
+#include <opencv_match_parameters.hpp>
+
 #include "opencv_components/visibility_control.h"
 
 namespace match_components
@@ -35,6 +37,8 @@ public:
   virtual ~OpenCVMatchComponent();
 
 private:
+  match_parameters::ParamListener parameter_listener_;
+  match_parameters::Params parameters_;
   rclcpp::Subscription<sensor_msgs::msg::Image>::SharedPtr image_sub_;
   image_transport::CameraPublisher image_pub_;
   void call_back(const sensor_msgs::msg::Image::SharedPtr image_msg);

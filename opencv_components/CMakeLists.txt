@@ -18,6 +18,11 @@ generate_parameter_library(
   parameters/opencv_camera_parameters.yaml
 )
 
+generate_parameter_library(
+  opencv_match_parameters
+  parameters/opencv_match_parameters.yaml
+)
+
 ament_auto_add_library(cv_bridge SHARED
   src/cv_bridge/cv_bridge.cpp
   src/cv_bridge/cv_mat_sensor_msgs_image_type_adapter.cpp
@@ -35,6 +40,7 @@ target_link_libraries(${PROJECT_NAME}
   opencv_core
   cv_bridge
   opencv_camera_parameters
+  opencv_match_parameters
 )
 
 ament_auto_add_executable(opencv_camera_node

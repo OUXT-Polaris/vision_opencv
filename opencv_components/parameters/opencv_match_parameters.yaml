@@ -1,0 +1,22 @@
+match_parameters:
+  similarity: {
+    type: double,
+    default_value: 1.5,
+    read_only: false,
+    description: "Degree of similarity"
+  }
+
+  max_area: {
+    type: int,
+    default_value: 18000,
+    read_only: false,
+    description: "Max area of contours"
+  }
+
+  min_area: {
+    type: int,
+    default_value: 80,
+    read_only: false,
+    description: "Min area of contours"
+  }
+
