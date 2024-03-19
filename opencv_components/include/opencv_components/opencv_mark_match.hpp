@@ -21,13 +21,12 @@
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv4/opencv2/opencv.hpp>
-#include <rclcpp/rclcpp.hpp>
-
 #include <opencv_match_parameters.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "opencv_components/visibility_control.h"
 
-namespace match_components
+namespace opencv_components
 {
 class OpenCVMatchComponent : public rclcpp::Node
 {
@@ -52,6 +51,6 @@ private:
   double match;
 };
 
-}  // namespace match_components
+}  // namespace opencv_components
 
 #endif  // OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_

@@ -42,6 +42,7 @@ target_link_libraries(${PROJECT_NAME}
   opencv_camera_parameters
   opencv_match_parameters
 )
+rclcpp_components_register_nodes(${PROJECT_NAME} "opencv_components::OpenCVMatchComponent")
 
 ament_auto_add_executable(opencv_camera_node
   src/opencv_camera_node.cpp
@@ -56,6 +57,7 @@ ament_auto_add_executable(opencv_mark_match
 target_link_libraries(opencv_mark_match
   ${PROJECT_NAME}
 )
+
 install(DIRECTORY picture DESTINATION share/${PROJECT_NAME})
 
 ament_auto_add_executable(tracking_node

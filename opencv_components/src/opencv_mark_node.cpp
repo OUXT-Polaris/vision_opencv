@@ -20,7 +20,7 @@ int main(int argc, char * argv[])
 {
   rclcpp::init(argc, argv);
   rclcpp::NodeOptions options;
-  auto component = std::make_shared<match_components::OpenCVMatchComponent>(options);
+  auto component = std::make_shared<opencv_components::OpenCVMatchComponent>(options);
   rclcpp::spin(component);
   rclcpp::shutdown();
   return 0;
