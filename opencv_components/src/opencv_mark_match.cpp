@@ -2,6 +2,8 @@
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <opencv_components/opencv_mark_match.hpp>
 
+#include <rclcpp_components/register_node_macro.hpp>//
+
 namespace match_components
 {
 OpenCVMatchComponent::OpenCVMatchComponent(const rclcpp::NodeOptions & options)
@@ -130,3 +132,7 @@ void OpenCVMatchComponent::call_back(const sensor_msgs::msg::Image::SharedPtr im
     std::make_shared<sensor_msgs::msg::CameraInfo>(sensor_msgs::msg::CameraInfo()));
 }
 }  // namespace match_components
+
+RCLCPP_COMPONENTS_REGISTER_NODE(opencv_components::front_left_camera_component)
+RCLCPP_COMPONENTS_REGISTER_NODE(opencv_components::front_right_camera_component)
+RCLCPP_COMPONENTS_REGISTER_NODE(opencv_components::middle_right_camera_component)

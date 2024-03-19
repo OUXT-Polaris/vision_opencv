@@ -73,3 +73,7 @@ target_link_libraries(tracking_node
 add_compile_options(-g)
 
 ament_auto_package()
+
+rclcpp_components_register_nodes(OpenCVMatchComponent "opencv_components::front_left_camera_component")
+rclcpp_components_register_nodes(OpenCVMatchComponent "opencv_components::front_right_camera_component")
+rclcpp_components_register_nodes(OpenCVMatchComponent "opencv_components::middle_right_camera_component")
