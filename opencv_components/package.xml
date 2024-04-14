@@ -14,7 +14,7 @@
   <depend>generate_parameter_library</depend>
   <depend>image_transport</depend>
   <depend>launch</depend>
-  <depend>messages_filters</depend>
+  <depend>message_filters</depend>
   <depend>opencv_vendor</depend>
   <depend>perception_msgs</depend>
   <depend>rclcpp_components</depend>
