@@ -15,12 +15,12 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 #define OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 
+#include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/sync_policies/exact_time.h>
 #include <message_filters/time_synchronizer.h>
 
 #include <atomic>
-#include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>

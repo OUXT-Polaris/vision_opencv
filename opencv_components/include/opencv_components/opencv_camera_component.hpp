@@ -15,8 +15,9 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 #define OPENCV_COMPONENTS__OPENCV_CAMERA_HPP_
 
+#include <cv_bridge/cv_bridge.h>
+
 #include <atomic>
-#include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv_camera_parameters.hpp>
