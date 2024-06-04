@@ -33,8 +33,10 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 
-#ifndef CV_BRIDGE__RGB_COLORS_HPP_
-#define CV_BRIDGE__RGB_COLORS_HPP_
+#ifndef CV_BRIDGE__RGB_COLORS_H_
+#define CV_BRIDGE__RGB_COLORS_H_
+
+#include <cv_bridge/cv_bridge_export.h>
 
 #include <opencv2/opencv.hpp>
 
@@ -201,10 +203,10 @@ enum Colors {
  * @brief
  * get rgb color with enum.
  */
-cv::Vec3d getRGBColor(const int color);
+CV_BRIDGE_EXPORT cv::Vec3d getRGBColor(const int color);
 
 }  // namespace rgb_colors
 
 }  // namespace cv_bridge
 
-#endif  // CV_BRIDGE__RGB_COLORS_HPP_
+#endif  // CV_BRIDGE__RGB_COLORS_H_

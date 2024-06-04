@@ -23,12 +23,6 @@ generate_parameter_library(
   parameters/opencv_match_parameters.yaml
 )
 
-ament_auto_add_library(cv_bridge SHARED
-  src/cv_bridge/cv_bridge.cpp
-  src/cv_bridge/cv_mat_sensor_msgs_image_type_adapter.cpp
-  src/cv_bridge/rgb_colors.cpp
-)
-
 ament_auto_add_library(${PROJECT_NAME} SHARED
   src/opencv_camera_component.cpp
   src/tracking_component.cpp
@@ -38,11 +32,11 @@ ament_auto_add_library(${PROJECT_NAME} SHARED
 )
 target_link_libraries(${PROJECT_NAME}
   opencv_core
-  cv_bridge
   opencv_camera_parameters
   opencv_match_parameters
 )
 rclcpp_components_register_nodes(${PROJECT_NAME} "opencv_components::OpenCVMatchComponent")
+ament_export_include_directories(include/opencv_match_parameters)
 
 ament_auto_add_executable(opencv_camera_node
   src/opencv_camera_node.cpp
@@ -71,7 +65,5 @@ target_link_libraries(tracking_node
 # install(DIRECTORY launch
 #   DESTINATION share/${PROJECT_NAME}
 # )
-
-add_compile_options(-g)
 
 ament_auto_package()

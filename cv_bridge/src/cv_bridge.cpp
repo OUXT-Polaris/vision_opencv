@@ -34,9 +34,10 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
+#include <cv_bridge/cv_bridge.h>
+#include <cv_bridge/rgb_colors.h>
+
 #include <boost/endian/conversion.hpp>
-#include <cv_bridge/cv_bridge.hpp>
-#include <cv_bridge/rgb_colors.hpp>
 #include <map>
 #include <memory>
 #include <opencv2/imgcodecs.hpp>
@@ -703,9 +704,7 @@ CvImageConstPtr cvtColorForDisplay(
 
   // Perform scaling if asked for
   if (options.do_dynamic_scaling) {
-    float inf = std::numeric_limits<float>::infinity();
-    cv::Mat mask = ((source->image != inf) & (source->image != -inf));
-    cv::minMaxLoc(source->image, &min_image_value, &max_image_value, NULL, NULL, mask);
+    cv::minMaxLoc(source->image, &min_image_value, &max_image_value);
     if (min_image_value == max_image_value) {
       CvImagePtr result(new CvImage());
       result->header = source->header;

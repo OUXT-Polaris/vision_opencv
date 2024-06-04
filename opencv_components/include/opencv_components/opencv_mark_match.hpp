@@ -15,9 +15,10 @@
 #ifndef OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 #define OPENCV_COMPONENTS__OPENCV_MARK_MATCH_HPP_
 
+#include <cv_bridge/cv_bridge.h>
+
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <atomic>
-#include <cv_bridge/cv_bridge.hpp>
 #include <image_transport/image_transport.hpp>
 #include <opencv2/opencv.hpp>
 #include <opencv4/opencv2/opencv.hpp>
