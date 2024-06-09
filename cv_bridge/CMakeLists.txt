@@ -31,6 +31,7 @@ if(NOT OpenCV_FOUND)
     CONFIG
   )
 endif()
+find_package(Boost)
 
 add_subdirectory(src)
 
